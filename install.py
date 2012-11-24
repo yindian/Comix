@@ -234,7 +234,7 @@ def check_dependencies():
     # Should also check the PyGTK version. To do that we have to load the
     # gtk module though, which normally can't be done while using `sudo`.
     try:
-        import pygtk
+        import gi
         print '    PyGTK ........................ OK'
     except ImportError:
         print '    !!! PyGTK .................... Not found'

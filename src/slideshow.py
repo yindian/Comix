@@ -1,6 +1,6 @@
 """slideshow.py - Slideshow handler."""
 
-import gobject
+from gi.repository import GObject
 
 from preferences import prefs
 
@@ -16,13 +16,13 @@ class Slideshow:
 
     def _start(self):
         if not self._running:
-            self._id = gobject.timeout_add(prefs['slideshow delay'], self._next)
+            self._id = GObject.timeout_add(prefs['slideshow delay'], self._next)
             self._running = True
             self._window.update_title()
 
     def _stop(self):
         if self._running:
-            gobject.source_remove(self._id)
+            GObject.source_remove(self._id)
             self._running = False
             self._window.update_title()
 

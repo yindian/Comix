@@ -3,16 +3,16 @@
 import os
 import shutil
 
-import gtk
+from gi.repository import Gtk
 
 import constants
 
 
-class _CleanerDialog(gtk.MessageDialog):
+class _CleanerDialog(Gtk.MessageDialog):
 
     def __init__(self, window, paths):
-        gtk.MessageDialog.__init__(self, window, 0, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_YES_NO,
+        GObject.GObject.__init__(self, window, 0, Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.YES_NO,
             _('There are deprecated files left on your computer.'))
 
         self._paths = paths
@@ -22,7 +22,7 @@ class _CleanerDialog(gtk.MessageDialog):
             _('Some old files (that were used for storing preferences, the library, bookmarks etc. for older versions of Comix) were found on your computer. If you do not plan on using the older versions of Comix again, you should remove these files in order to save some disk space. Do you want these files to be removed for you now?'))
     
     def _response(self, dialog, response):
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             for path in self._paths:
                 try:
                     if os.path.isdir(path):

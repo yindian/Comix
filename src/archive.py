@@ -7,7 +7,7 @@ import zipfile
 import tarfile
 import threading
 
-import gtk
+from gi.repository import Gtk
 
 import process
 
@@ -61,8 +61,8 @@ class Extractor:
                 _rar_exec = _get_rar_exec()
                 if _rar_exec is None:
                     print '! Could not find RAR file extractor.'
-                    dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING,
-                        gtk.BUTTONS_CLOSE,
+                    dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.WARNING,
+                        Gtk.ButtonsType.CLOSE,
                         _("Could not find RAR file extractor!"))
                     dialog.format_secondary_markup(
                         _("You need either the <i>rar</i> or the <i>unrar</i> program installed in order to read RAR (.cbr) files."))

@@ -28,21 +28,21 @@ import getopt
 
 #Check for PyGTK and PIL dependencies.
 try:
-    import pygtk
-    pygtk.require('2.0')
-    import gtk
-    assert gtk.gtk_version >= (2, 12, 0)
-    assert gtk.pygtk_version >= (2, 12, 0)
-    import gobject
-    gobject.threads_init()
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    assert Gtk.gtk_version >= (2, 12, 0)
+    assert Gtk.pygtk_version >= (2, 12, 0)
+    from gi.repository import GObject
+    GObject.threads_init()
 except AssertionError:
     print "You don't have the required versions of GTK+ and/or PyGTK",
     print 'installed.'
     print 'Installed GTK+ version is: %s' % (
-        '.'.join([str(n) for n in gtk.gtk_version]))
+        '.'.join([str(n) for n in Gtk.gtk_version]))
     print 'Required GTK+ version is: 2.12.0 or higher\n'
     print 'Installed PyGTK version is: %s' % (
-        '.'.join([str(n) for n in gtk.pygtk_version]))
+        '.'.join([str(n) for n in Gtk.pygtk_version]))
     print 'Required PyGTK version is: 2.12.0 or higher'
     sys.exit(1)
 except ImportError:
@@ -144,7 +144,7 @@ def run():
         open_path=open_path, open_page=open_page)
     deprecated.check_for_deprecated_files(window)
     try:
-        gtk.main()
+        Gtk.main()
     except KeyboardInterrupt: # Will not always work because of threading.
         window.terminate_program()
 

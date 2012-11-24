@@ -9,8 +9,8 @@ except ImportError:
     # Running on non-Unix machine.
     pass
 
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
 
 import archive
 import encoding
@@ -20,29 +20,29 @@ import labels
 _dialog = None
 
 
-class _Page(gtk.VBox):
+class _Page(Gtk.VBox):
 
-    """A page to put in the gtk.Notebook. Contains info about a file (an
+    """A page to put in the Gtk.Notebook. Contains info about a file (an
     image or an archive.)
     """
 
     def __init__(self):
-        gtk.VBox.__init__(self, False, 12)
+        GObject.GObject.__init__(self, False, 12)
 
         self.set_border_width(12)
-        topbox = gtk.HBox(False, 12)
+        topbox = Gtk.HBox(False, 12)
         self.pack_start(topbox, False)
-        self._thumb = gtk.Image()
+        self._thumb = Gtk.Image()
         topbox.pack_start(self._thumb, False, False)
-        borderbox = gtk.EventBox()
-        borderbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#333'))
+        borderbox = Gtk.EventBox()
+        borderbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('#333'))
         borderbox.set_size_request(-1, 130)
-        topbox.pack_start(borderbox)
-        insidebox = gtk.EventBox()
+        topbox.pack_start(borderbox, True, True, 0)
+        insidebox = Gtk.EventBox()
         insidebox.set_border_width(1)
-        insidebox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#ddb'))
+        insidebox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('#ddb'))
         borderbox.add(insidebox)
-        self._mainbox = gtk.VBox(False, 5)
+        self._mainbox = Gtk.VBox(False, 5)
         self._mainbox.set_border_width(10)
         insidebox.add(self._mainbox)
 
@@ -57,14 +57,14 @@ class _Page(gtk.VBox):
         label = labels.BoldLabel(encoding.to_unicode(filename))
         label.set_alignment(0, 0.5)
         self._mainbox.pack_start(label, False, False)
-        self._mainbox.pack_start(gtk.VBox()) # Just to add space (better way?)
+        self._mainbox.pack_start(Gtk.VBox(, True, True, 0)) # Just to add space (better way?)
 
     def set_main_info(self, info):
         """Set the information in the main info box (below the filename) to
         the values in the sequence <info>.
         """
         for text in info:
-            label = gtk.Label(text)
+            label = Gtk.Label(label=text)
             label.set_alignment(0, 0.5)
             self._mainbox.pack_start(label, False, False)
 
@@ -72,33 +72,33 @@ class _Page(gtk.VBox):
         """Set the information below the main info box to the values in the
         sequence <info>. Each entry in info should be a tuple (desc, value).
         """
-        hbox = gtk.HBox(False, 10)
+        hbox = Gtk.HBox(False, 10)
         self.pack_start(hbox, False, False)
-        left_box = gtk.VBox(True, 8)
-        right_box = gtk.VBox(True, 8)
+        left_box = Gtk.VBox(True, 8)
+        right_box = Gtk.VBox(True, 8)
         hbox.pack_start(left_box, False, False)
         hbox.pack_start(right_box, False, False)
         for desc, value in info:
             desc_label = labels.BoldLabel('%s:' % desc)
             desc_label.set_alignment(1.0, 1.0)
             left_box.pack_start(desc_label, True, True)
-            value_label = gtk.Label(value)
+            value_label = Gtk.Label(label=value)
             value_label.set_alignment(0, 1.0)
             right_box.pack_start(value_label, True, True)
 
 
-class _PropertiesDialog(gtk.Dialog):
+class _PropertiesDialog(Gtk.Dialog):
 
     def __init__(self, window):
 
-        gtk.Dialog.__init__(self, _('Properties'), window, 0,
-            (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
+        GObject.GObject.__init__(self, _('Properties'), window, 0,
+            (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
 
         self.set_resizable(False)
         self.set_has_separator(False)
         self.connect('response', _close_dialog)
-        self.set_default_response(gtk.RESPONSE_CLOSE)
-        notebook = gtk.Notebook()
+        self.set_default_response(Gtk.ResponseType.CLOSE)
+        notebook = Gtk.Notebook()
         self.set_border_width(4)
         notebook.set_border_width(6)
         self.vbox.pack_start(notebook, False, False, 0)
@@ -137,7 +137,7 @@ class _PropertiesDialog(gtk.Dialog):
                 page.set_secondary_info(secondary_info)
             except Exception:
                 pass
-            notebook.append_page(page, gtk.Label(_('Archive')))
+            notebook.append_page(page, Gtk.Label(label=_('Archive')))
 
         # ----------------------------------------------------------------
         # Image tab
@@ -171,7 +171,7 @@ class _PropertiesDialog(gtk.Dialog):
             page.set_secondary_info(secondary_info)
         except Exception:
             pass
-        notebook.append_page(page, gtk.Label(_('Image')))
+        notebook.append_page(page, Gtk.Label(label=_('Image')))
         self.show_all()
 
 

@@ -1,14 +1,14 @@
 """status.py - Statusbar for main window."""
 
-import gtk
+from gi.repository import Gtk
 
 import encoding
 
 
-class Statusbar(gtk.Statusbar):
+class Statusbar(Gtk.Statusbar):
 
     def __init__(self):
-        gtk.Statusbar.__init__(self)
+        GObject.GObject.__init__(self)
         self.set_has_resize_grip(True)
         self._page_info = ''
         self._resolution = ''

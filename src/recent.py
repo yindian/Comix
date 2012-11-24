@@ -2,22 +2,22 @@
 
 import urllib
 
-import gtk
+from gi.repository import Gtk
 
 import preferences
 
 
-class RecentFilesMenu(gtk.RecentChooserMenu):
+class RecentFilesMenu(Gtk.RecentChooserMenu):
 
     def __init__(self, ui, window):
         self._window = window
-        self._manager = gtk.recent_manager_get_default()
-        gtk.RecentChooserMenu.__init__(self, self._manager)
+        self._manager = Gtk.recent_manager_get_default()
+        GObject.GObject.__init__(self, self._manager)
 
-        self.set_sort_type(gtk.RECENT_SORT_MRU)
+        self.set_sort_type(Gtk.RECENT_SORT_MRU)
         self.set_show_tips(True)
 
-        rfilter = gtk.RecentFilter()
+        rfilter = Gtk.RecentFilter()
         rfilter.add_pixbuf_formats()
         rfilter.add_mime_type('application/x-zip')
         rfilter.add_mime_type('application/zip')

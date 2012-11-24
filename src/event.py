@@ -6,8 +6,8 @@ given its own file for the sake of readability.
 
 import urllib
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 import cursor
 import preferences
@@ -43,74 +43,74 @@ class EventHandler:
         # Some navigation keys that work as well as the accelerators in
         # ui.py.
         # ----------------------------------------------------------------
-        if event.keyval in (gtk.keysyms.KP_Page_Up, gtk.keysyms.BackSpace):
+        if event.keyval in (Gdk.KEY_KP_Page_Up, Gdk.KEY_BackSpace):
             self._window.previous_page()
-        elif event.keyval == gtk.keysyms.KP_Page_Down:
+        elif event.keyval == Gdk.KEY_KP_Page_Down:
             self._window.next_page()
 
         # ----------------------------------------------------------------
         # Numpad (without numlock) aligns the image depending on the key.
         # ----------------------------------------------------------------
-        elif event.keyval == gtk.keysyms.KP_1:
+        elif event.keyval == Gdk.KEY_KP_1:
             self._window.scroll_to_fixed(horiz='left', vert='bottom')
-        elif event.keyval == gtk.keysyms.KP_2:
+        elif event.keyval == Gdk.KEY_KP_2:
             self._window.scroll_to_fixed(horiz='middle', vert='bottom')
-        elif event.keyval == gtk.keysyms.KP_3:
+        elif event.keyval == Gdk.KEY_KP_3:
             self._window.scroll_to_fixed(horiz='right', vert='bottom')
-        elif event.keyval == gtk.keysyms.KP_4:
+        elif event.keyval == Gdk.KEY_KP_4:
             self._window.scroll_to_fixed(horiz='left', vert='middle')
-        elif event.keyval == gtk.keysyms.KP_5:
+        elif event.keyval == Gdk.KEY_KP_5:
             self._window.scroll_to_fixed(horiz='middle', vert='middle')
-        elif event.keyval == gtk.keysyms.KP_6:
+        elif event.keyval == Gdk.KEY_KP_6:
             self._window.scroll_to_fixed(horiz='right', vert='middle')
-        elif event.keyval == gtk.keysyms.KP_7:
+        elif event.keyval == Gdk.KEY_KP_7:
             self._window.scroll_to_fixed(horiz='left', vert='top')
-        elif event.keyval == gtk.keysyms.KP_8:
+        elif event.keyval == Gdk.KEY_KP_8:
             self._window.scroll_to_fixed(horiz='middle', vert='top')
-        elif event.keyval == gtk.keysyms.KP_9:
+        elif event.keyval == Gdk.KEY_KP_9:
             self._window.scroll_to_fixed(horiz='right', vert='top')
 
         # ----------------------------------------------------------------
         # Enter/exit fullscreen. 'f' is also a valid key, defined as an
         # accelerator elsewhere.
         # ----------------------------------------------------------------
-        elif event.keyval == gtk.keysyms.Escape:
+        elif event.keyval == Gdk.KEY_Escape:
             self._window.actiongroup.get_action('fullscreen').set_active(False)
-        elif event.keyval == gtk.keysyms.F11:
+        elif event.keyval == Gdk.KEY_F11:
             self._window.actiongroup.get_action('fullscreen').activate()
 
         # ----------------------------------------------------------------
         # Zooming commands for manual zoom mode. These keys complement
         # others (with the same action) defined as accelerators.
         # ----------------------------------------------------------------
-        elif event.keyval in (gtk.keysyms.plus, gtk.keysyms.equal):
+        elif event.keyval in (Gdk.KEY_plus, Gdk.KEY_equal):
             self._window.actiongroup.get_action('zoom_in').activate()
-        elif event.keyval == gtk.keysyms.minus:
+        elif event.keyval == Gdk.KEY_minus:
             self._window.actiongroup.get_action('zoom_out').activate()
-        elif (event.keyval in (gtk.keysyms._0, gtk.keysyms.KP_0) and
-          'GDK_CONTROL_MASK' in event.state.value_names):
+        elif (event.keyval in (Gdk.KEY__0, Gdk.KEY_KP_0) and
+          'GDK_CONTROL_MASK' in event.get_state().value_names):
             self._window.actiongroup.get_action('zoom_original').activate()
 
         # ----------------------------------------------------------------
         # Arrow keys scroll the image, except in best fit mode where
         # they flip pages instead.
         # ----------------------------------------------------------------
-        elif event.keyval in (gtk.keysyms.Down, gtk.keysyms.KP_Down):
+        elif event.keyval in (Gdk.KEY_Down, Gdk.KEY_KP_Down):
             if not self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._scroll_with_flipping(0, 50)
             else:
                 self._window.next_page()
-        elif event.keyval in (gtk.keysyms.Up, gtk.keysyms.KP_Up):
+        elif event.keyval in (Gdk.KEY_Up, Gdk.KEY_KP_Up):
             if not self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._scroll_with_flipping(0, -50)
             else:
                 self._window.previous_page()
-        elif event.keyval in (gtk.keysyms.Right, gtk.keysyms.KP_Right):
+        elif event.keyval in (Gdk.KEY_Right, Gdk.KEY_KP_Right):
             if not self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._scroll_with_flipping(50, 0)
             else:
                 self._window.next_page()
-        elif event.keyval in (gtk.keysyms.Left, gtk.keysyms.KP_Left):
+        elif event.keyval in (Gdk.KEY_Left, Gdk.KEY_KP_Left):
             if not self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._scroll_with_flipping(-50, 0)
             else:
@@ -126,15 +126,15 @@ class EventHandler:
         #
         # If Shift is pressed we should backtrack instead.
         # ----------------------------------------------------------------
-        elif event.keyval in [gtk.keysyms.space, gtk.keysyms.KP_Home,
-          gtk.keysyms.KP_End]:
+        elif event.keyval in [Gdk.KEY_space, Gdk.KEY_KP_Home,
+          Gdk.KEY_KP_End]:
             x_step, y_step = self._window.get_visible_area_size()
             x_step = int(x_step * 0.9)
             y_step = int(y_step * 0.9)
             if self._window.is_manga_mode:
                 x_step *= -1
-            if ('GDK_SHIFT_MASK' in event.state.value_names or
-              event.keyval == gtk.keysyms.KP_Home):
+            if ('GDK_SHIFT_MASK' in event.get_state().value_names or
+              event.keyval == Gdk.KEY_KP_Home):
                 if prefs['smart space scroll']:
                     if self._window.displayed_double():
                         if self._window.is_on_first_page():
@@ -204,12 +204,12 @@ class EventHandler:
         # We kill the signals here for the Up, Down, Space and Enter keys,
         # or they will start fiddling with the thumbnail selector (bad).
         # ----------------------------------------------------------------
-        if (event.keyval in (gtk.keysyms.Up, gtk.keysyms.Down,
-          gtk.keysyms.space, gtk.keysyms.KP_Enter, gtk.keysyms.KP_Up,
-          gtk.keysyms.KP_Down, gtk.keysyms.KP_Home, gtk.keysyms.KP_End,
-          gtk.keysyms.KP_Page_Up, gtk.keysyms.KP_Page_Down) or
-          (event.keyval == gtk.keysyms.Return and not
-          'GDK_MOD1_MASK' in event.state.value_names)):
+        if (event.keyval in (Gdk.KEY_Up, Gdk.KEY_Down,
+          Gdk.KEY_space, Gdk.KEY_KP_Enter, Gdk.KEY_KP_Up,
+          Gdk.KEY_KP_Down, Gdk.KEY_KP_Home, Gdk.KEY_KP_End,
+          Gdk.KEY_KP_Page_Up, Gdk.KEY_KP_Page_Down) or
+          (event.keyval == Gdk.KEY_Return and not
+          'GDK_MOD1_MASK' in event.get_state().value_names)):
             self._window.emit_stop_by_name('key_press_event')
             return True
 
@@ -218,9 +218,9 @@ class EventHandler:
         wheel flips pages in best fit mode and scrolls the scrollbars
         otherwise.
         """
-        if 'GDK_BUTTON2_MASK' in event.state.value_names:
+        if 'GDK_BUTTON2_MASK' in event.get_state().value_names:
             return
-        if event.direction == gtk.gdk.SCROLL_UP:
+        if event.direction == Gdk.ScrollDirection.UP:
             if self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._window.previous_page()
             elif self._window.zoom_mode == preferences.ZOOM_MODE_HEIGHT:
@@ -230,7 +230,7 @@ class EventHandler:
                     self._scroll_with_flipping(-70, 0)
             else:
                 self._scroll_with_flipping(0, -70)
-        elif event.direction == gtk.gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.ScrollDirection.DOWN:
             if self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
                 self._window.next_page()
             elif self._window.zoom_mode == preferences.ZOOM_MODE_HEIGHT:
@@ -240,9 +240,9 @@ class EventHandler:
                     self._scroll_with_flipping(70, 0)
             else:
                 self._scroll_with_flipping(0, 70)
-        elif event.direction == gtk.gdk.SCROLL_RIGHT:
+        elif event.direction == Gdk.ScrollDirection.RIGHT:
             self._window.next_page()
-        elif event.direction == gtk.gdk.SCROLL_LEFT:
+        elif event.direction == Gdk.ScrollDirection.LEFT:
             self._window.previous_page()
 
     def mouse_press_event(self, widget, event):
@@ -272,7 +272,7 @@ class EventHandler:
     def mouse_move_event(self, widget, event):
         """Handle mouse pointer movement events."""
         event = _get_latest_event_of_same_type(event)
-        if 'GDK_BUTTON1_MASK' in event.state.value_names:
+        if 'GDK_BUTTON1_MASK' in event.get_state().value_names:
             self._window.cursor_handler.set_cursor_type(cursor.GRAB)
             self._window.scroll(self._last_pointer_pos_x - event.x_root,
                                 self._last_pointer_pos_y - event.y_root)
@@ -333,8 +333,8 @@ def _get_latest_event_of_same_type(event):
     events of that type will be removed from the event queue.
     """
     events = []
-    while gtk.gdk.events_pending():
-        queued_event = gtk.gdk.event_get()
+    while Gdk.events_pending():
+        queued_event = Gdk.event_get()
         if queued_event is not None:
             if queued_event.type == event.type:
                 event = queued_event

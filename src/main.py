@@ -5,8 +5,8 @@ import os
 import shutil
 import threading
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 import constants
 import cursor
@@ -24,7 +24,7 @@ import status
 import thumbbar
 
 
-class MainWindow(gtk.Window):
+class MainWindow(Gtk.Window):
 
     """The Comix main window, is created at start and terminates the
     program when closed.
@@ -32,7 +32,7 @@ class MainWindow(gtk.Window):
 
     def __init__(self, fullscreen=False, show_library=False, open_path=None,
             open_page=1):
-        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        GObject.GObject.__init__(self, Gtk.WindowType.TOPLEVEL)
 
         # ----------------------------------------------------------------
         # Attributes
@@ -60,16 +60,16 @@ class MainWindow(gtk.Window):
         self.toolbar = self.ui_manager.get_widget('/Tool')
         self.popup = self.ui_manager.get_widget('/Popup')
         self.actiongroup = self.ui_manager.get_action_groups()[0]
-        self.left_image = gtk.Image()
-        self.right_image = gtk.Image()
+        self.left_image = Gtk.Image()
+        self.right_image = Gtk.Image()
 
-        self._image_box = gtk.HBox(False, 2)
-        self._main_layout = gtk.Layout()
+        self._image_box = Gtk.HBox(False, 2)
+        self._main_layout = Gtk.Layout()
         self._event_handler = event.EventHandler(self)
         self._vadjust = self._main_layout.get_vadjustment()
         self._hadjust = self._main_layout.get_hadjustment()
-        self._vscroll = gtk.VScrollbar(self._vadjust)
-        self._hscroll = gtk.HScrollbar(self._hadjust)
+        self._vscroll = Gtk.VScrollbar(self._vadjust)
+        self._hscroll = Gtk.HScrollbar(self._hadjust)
 
         # ----------------------------------------------------------------
         # Setup
@@ -82,8 +82,8 @@ class MainWindow(gtk.Window):
         # we don't activate it with space or some other key (alternative?)
         self.toolbar.set_focus_child(
             self.ui_manager.get_widget('/Tool/expander'))
-        self.toolbar.set_style(gtk.TOOLBAR_ICONS)
-        self.toolbar.set_icon_size(gtk.ICON_SIZE_LARGE_TOOLBAR)
+        self.toolbar.set_style(Gtk.TOOLBAR_ICONS)
+        self.toolbar.set_icon_size(Gtk.IconSize.LARGE_TOOLBAR)
 
         self._image_box.add(self.left_image)
         self._image_box.add(self.right_image)
@@ -97,21 +97,21 @@ class MainWindow(gtk.Window):
         self._hadjust.step_increment = 15
         self._hadjust.page_increment = 1
 
-        table = gtk.Table(2, 2, False)
-        table.attach(self.thumbnailsidebar, 0, 1, 2, 5, gtk.FILL,
-            gtk.FILL|gtk.EXPAND, 0, 0)
-        table.attach(self._main_layout, 1, 2, 2, 3, gtk.FILL|gtk.EXPAND,
-            gtk.FILL|gtk.EXPAND, 0, 0)
-        table.attach(self._vscroll, 2, 3, 2, 3, gtk.FILL|gtk.SHRINK,
-            gtk.FILL|gtk.SHRINK, 0, 0)
-        table.attach(self._hscroll, 1, 2, 4, 5, gtk.FILL|gtk.SHRINK,
-            gtk.FILL, 0, 0)
-        table.attach(self.menubar, 0, 3, 0, 1, gtk.FILL|gtk.SHRINK,
-            gtk.FILL, 0, 0)
-        table.attach(self.toolbar, 0, 3, 1, 2, gtk.FILL|gtk.SHRINK,
-            gtk.FILL, 0, 0)
-        table.attach(self.statusbar, 0, 3, 5, 6, gtk.FILL|gtk.SHRINK,
-            gtk.FILL, 0, 0)
+        table = Gtk.Table(2, 2, False)
+        table.attach(self.thumbnailsidebar, 0, 1, 2, 5, Gtk.AttachOptions.FILL,
+            Gtk.AttachOptions.FILL|Gtk.AttachOptions.EXPAND, 0, 0)
+        table.attach(self._main_layout, 1, 2, 2, 3, Gtk.AttachOptions.FILL|Gtk.AttachOptions.EXPAND,
+            Gtk.AttachOptions.FILL|Gtk.AttachOptions.EXPAND, 0, 0)
+        table.attach(self._vscroll, 2, 3, 2, 3, Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK,
+            Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK, 0, 0)
+        table.attach(self._hscroll, 1, 2, 4, 5, Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK,
+            Gtk.AttachOptions.FILL, 0, 0)
+        table.attach(self.menubar, 0, 3, 0, 1, Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK,
+            Gtk.AttachOptions.FILL, 0, 0)
+        table.attach(self.toolbar, 0, 3, 1, 2, Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK,
+            Gtk.AttachOptions.FILL, 0, 0)
+        table.attach(self.statusbar, 0, 3, 5, 6, Gtk.AttachOptions.FILL|Gtk.AttachOptions.SHRINK,
+            Gtk.AttachOptions.FILL, 0, 0)
 
         if prefs['default double page']:
             self.actiongroup.get_action('double_page').activate()
@@ -164,15 +164,15 @@ class MainWindow(gtk.Window):
         self._main_layout.show()
         self._display_active_widgets()
 
-        self._main_layout.set_events(gtk.gdk.BUTTON1_MOTION_MASK |
-                                     gtk.gdk.BUTTON2_MOTION_MASK |
-                                     gtk.gdk.BUTTON_PRESS_MASK |
-                                     gtk.gdk.BUTTON_RELEASE_MASK |
-                                     gtk.gdk.POINTER_MOTION_MASK)
-        self._main_layout.drag_dest_set(gtk.DEST_DEFAULT_ALL,
+        self._main_layout.set_events(Gdk.EventMask.BUTTON1_MOTION_MASK |
+                                     Gdk.EventMask.BUTTON2_MOTION_MASK |
+                                     Gdk.EventMask.BUTTON_PRESS_MASK |
+                                     Gdk.EventMask.BUTTON_RELEASE_MASK |
+                                     Gdk.EventMask.POINTER_MOTION_MASK)
+        self._main_layout.drag_dest_set(Gtk.DestDefaults.ALL,
                                         [('text/uri-list', 0, 0)],
-                                        gtk.gdk.ACTION_COPY |
-                                        gtk.gdk.ACTION_MOVE)
+                                        Gdk.DragAction.COPY |
+                                        Gdk.DragAction.MOVE)
 
         self.connect('delete_event', self.terminate_program)
         self.connect('key_press_event', self._event_handler.key_press_event)
@@ -200,8 +200,8 @@ class MainWindow(gtk.Window):
         """
         if not self._waiting_for_redraw: # Don't stack up redraws.
             self._waiting_for_redraw = True
-            gobject.idle_add(self._draw_image, at_bottom, scroll,
-                priority=gobject.PRIORITY_HIGH_IDLE)
+            GObject.idle_add(self._draw_image, at_bottom, scroll,
+                priority=GObject.PRIORITY_HIGH_IDLE)
 
     def _draw_image(self, at_bottom, scroll):
         self._waiting_for_redraw = False
@@ -364,8 +364,8 @@ class MainWindow(gtk.Window):
         self.statusbar.set_root(self.file_handler.get_base_filename())
         self.statusbar.update()
         self.update_title()
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
         enhance.draw_histogram(self.left_image)
         self.file_handler.do_cacheing()
         self.thumbnailsidebar.load_thumbnails()
@@ -715,8 +715,8 @@ class MainWindow(gtk.Window):
         """Set the background colour to <colour>. Colour is a sequence in the
         format (r, g, b). Values are 16-bit.
         """
-        self._main_layout.modify_bg(gtk.STATE_NORMAL,
-            gtk.gdk.colormap_get_system().alloc_color(gtk.gdk.Color(
+        self._main_layout.modify_bg(Gtk.StateType.NORMAL,
+            Gdk.colormap_get_system().alloc_color(Gdk.Color(
             colour[0], colour[1], colour[2]), False, True))
 
     def _display_active_widgets(self):
@@ -767,8 +767,8 @@ class MainWindow(gtk.Window):
     def terminate_program(self, *args):
         """Run clean-up tasks and exit the program."""
         self.hide()
-        if gtk.main_level() > 0:
-            gtk.main_quit()
+        if Gtk.main_level() > 0:
+            Gtk.main_quit()
         if prefs['auto load last file'] and self.file_handler.file_loaded:
             prefs['path to last file'] = self.file_handler.get_real_path()
             prefs['page of last file'] = self.file_handler.get_current_page()

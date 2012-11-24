@@ -4,7 +4,7 @@ Logically this isn't really a separate module from main.py, but it is
 given it's own file for the sake of readability.
 """
 
-import gtk
+from gi.repository import Gtk
 
 import about
 import bookmark
@@ -20,34 +20,34 @@ import recent
 import thumbremover
 
 
-class MainUI(gtk.UIManager):
+class MainUI(Gtk.UIManager):
 
     def __init__(self, window):
-        gtk.UIManager.__init__(self)
+        GObject.GObject.__init__(self)
         self._window = window
 
         # ----------------------------------------------------------------
         # Create actions for the menus.
         # ----------------------------------------------------------------
-        self._actiongroup = gtk.ActionGroup('comix-main')
+        self._actiongroup = Gtk.ActionGroup('comix-main')
         self._actiongroup.add_actions([
-            ('next_page', gtk.STOCK_GO_FORWARD, _('_Next page'),
+            ('next_page', Gtk.STOCK_GO_FORWARD, _('_Next page'),
                 'Page_Down', None, window.next_page),
-            ('previous_page', gtk.STOCK_GO_BACK, _('_Previous page'),
+            ('previous_page', Gtk.STOCK_GO_BACK, _('_Previous page'),
                 'Page_Up', None, window.previous_page),
-            ('first_page', gtk.STOCK_GOTO_FIRST, _('_First page'),
+            ('first_page', Gtk.STOCK_GOTO_FIRST, _('_First page'),
                 'Home', None, window.first_page),
-            ('last_page', gtk.STOCK_GOTO_LAST, _('_Last page'),
+            ('last_page', Gtk.STOCK_GOTO_LAST, _('_Last page'),
                 'End', None, window.last_page),
-            ('zoom_in', gtk.STOCK_ZOOM_IN, _('_Zoom in'),
+            ('zoom_in', Gtk.STOCK_ZOOM_IN, _('_Zoom in'),
                 'KP_Add', None, window.manual_zoom_in),
-            ('zoom_out', gtk.STOCK_ZOOM_OUT, _('Zoom _out'),
+            ('zoom_out', Gtk.STOCK_ZOOM_OUT, _('Zoom _out'),
                 'KP_Subtract', None, window.manual_zoom_out),
-            ('zoom_original', gtk.STOCK_ZOOM_100, _('O_riginal size'),
+            ('zoom_original', Gtk.STOCK_ZOOM_100, _('O_riginal size'),
                 '<Control>0', None, window.manual_zoom_original),  
-            ('close', gtk.STOCK_CLOSE, _('_Close'),
+            ('close', Gtk.STOCK_CLOSE, _('_Close'),
                 '<Control>w', None, window.file_handler.close_file),
-            ('quit', gtk.STOCK_QUIT, _('_Quit'),
+            ('quit', Gtk.STOCK_QUIT, _('_Quit'),
                 '<Control>q', None, window.terminate_program),
             ('rotate_90', 'comix-rotate-90', _('_Rotate 90 degrees CW'),
                 'r', None, window.rotate_90),
@@ -92,7 +92,7 @@ class MainUI(gtk.UIManager):
                 'm', None, window.change_manga_mode),
             ('keep_transformation', None, _('_Keep transformation'),
                 'k', None, window.change_keep_transformation),
-            ('slideshow', gtk.STOCK_MEDIA_PLAY, _('Run _slideshow'),
+            ('slideshow', Gtk.STOCK_MEDIA_PLAY, _('Run _slideshow'),
                 '<Control>S', None, window.slideshow.toggle),
             ('lens', 'comix-lens', _('Magnifying _glass'),
                 'g', None, window.glass.toggle)])
@@ -112,22 +112,22 @@ class MainUI(gtk.UIManager):
 
         # Some actions added separately since they need extra arguments.
         self._actiongroup.add_actions([
-            ('about', gtk.STOCK_ABOUT, _('_About'),
+            ('about', Gtk.STOCK_ABOUT, _('_About'),
                 None, None, about.open_dialog),
             ('comments', 'comix-comments', _('_View comments...'),
                 'c', None, comment.open_dialog),
-            ('edit_archive', gtk.STOCK_EDIT, _('_Edit archive...'),
+            ('edit_archive', Gtk.STOCK_EDIT, _('_Edit archive...'),
                 None, None, edit.open_dialog),
-            ('open', gtk.STOCK_OPEN, _('_Open...'),
+            ('open', Gtk.STOCK_OPEN, _('_Open...'),
                 '<Control>o', None, filechooser.open_main_filechooser_dialog),
-            ('properties', gtk.STOCK_PROPERTIES, _('_Properties'),
+            ('properties', Gtk.STOCK_PROPERTIES, _('_Properties'),
                 '<Alt>Return', None, properties.open_dialog),
             ('enhance_image', 'comix-enhance-image', _('_Enhance image...'),
                 'e', None, enhance.open_dialog),
             ('thumbnail_maintenance', 'comix-thumbnails',
                 _('_Thumbnail maintenance...'),
                 None, None, thumbremover.open_dialog),
-            ('preferences', gtk.STOCK_PREFERENCES, _('Pr_eferences'),
+            ('preferences', Gtk.STOCK_PREFERENCES, _('Pr_eferences'),
                 None, None, preferences.open_dialog)], window)
 
         self._actiongroup.add_actions([

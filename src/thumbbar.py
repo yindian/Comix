@@ -2,8 +2,8 @@
 
 import urllib
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 import Image
 import ImageDraw
 
@@ -12,28 +12,28 @@ from preferences import prefs
 import thumbnail
 
 
-class ThumbnailSidebar(gtk.HBox):
+class ThumbnailSidebar(Gtk.HBox):
 
     """A thumbnail sidebar including scrollbar for the main window."""
 
     def __init__(self, window):
-        gtk.HBox.__init__(self, False, 0)
+        GObject.GObject.__init__(self, False, 0)
         self._window = window
         self._loaded = False
         self._load_task = None
         self._height = 0
 
-        self._liststore = gtk.ListStore(gtk.gdk.Pixbuf)
-        self._treeview = gtk.TreeView(self._liststore)
+        self._liststore = Gtk.ListStore(GdkPixbuf.Pixbuf)
+        self._treeview = Gtk.TreeView(self._liststore)
 
-        self._treeview.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,
-            [('text/uri-list', 0, 0)], gtk.gdk.ACTION_COPY)
+        self._treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
+            [('text/uri-list', 0, 0)], Gdk.DragAction.COPY)
 
-        self._column = gtk.TreeViewColumn(None)
-        cellrenderer = gtk.CellRendererPixbuf()
-        self._layout = gtk.Layout()
+        self._column = Gtk.TreeViewColumn(None)
+        cellrenderer = Gtk.CellRendererPixbuf()
+        self._layout = Gtk.Layout()
         self._layout.put(self._treeview, 0, 0)
-        self._column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        self._column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self._treeview.append_column(self._column)
         self._column.pack_start(cellrenderer, True)
         self._column.set_attributes(cellrenderer, pixbuf=0)
@@ -43,12 +43,12 @@ class ThumbnailSidebar(gtk.HBox):
         self._vadjust = self._layout.get_vadjustment()
         self._vadjust.step_increment = 15
         self._vadjust.page_increment = 1
-        self._scroll = gtk.VScrollbar(None)
+        self._scroll = Gtk.VScrollbar(None)
         self._scroll.set_adjustment(self._vadjust)
         self._selection = self._treeview.get_selection()
 
-        self.pack_start(self._layout)
-        self.pack_start(self._scroll)
+        self.pack_start(self._layout, True, True, 0)
+        self.pack_start(self._scroll, True, True, 0)
         
         self._treeview.connect_after('drag_begin', self._drag_begin)
         self._treeview.connect('drag_data_get', self._drag_data_get)
@@ -93,8 +93,8 @@ class ThumbnailSidebar(gtk.HBox):
 
         self._loaded = True
         if self._load_task is not None:
-            gobject.source_remove(self._load_task)
-        self._load_task = gobject.idle_add(self._load)
+            GObject.source_remove(self._load_task)
+        self._load_task = GObject.idle_add(self._load)
 
     def update_select(self):
         """Select the thumbnail for the currently viewed page and make sure
@@ -126,8 +126,8 @@ class ThumbnailSidebar(gtk.HBox):
                 _add_page_number(pixbuf, i)
             pixbuf = image.add_border(pixbuf, 1)
             self._liststore.append([pixbuf])
-            while gtk.events_pending():
-                gtk.main_iteration(False)
+            while Gtk.events_pending():
+                Gtk.main_iteration(False)
             if self._stop_update:
                 return
             self._height += self._treeview.get_background_area(i - 1,
@@ -152,9 +152,9 @@ class ThumbnailSidebar(gtk.HBox):
 
     def _scroll_event(self, widget, event):
         """Handle scroll events on the thumbnail sidebar."""
-        if event.direction == gtk.gdk.SCROLL_UP:
+        if event.direction == Gdk.ScrollDirection.UP:
             self._vadjust.set_value(self._vadjust.get_value() - 60)
-        elif event.direction == gtk.gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.ScrollDirection.DOWN:
             upper = self._vadjust.upper - self._vadjust.page_size
             self._vadjust.set_value(min(self._vadjust.get_value() + 60, upper))
 
@@ -179,7 +179,7 @@ class ThumbnailSidebar(gtk.HBox):
         pixmap = treeview.create_row_drag_icon(path)
         # context.set_icon_pixmap() seems to cause crashes, so we do a
         # quick and dirty conversion to pixbuf.
-        pointer = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8,
+        pointer = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
             *pixmap.get_size())
         pointer = pointer.get_from_drawable(pixmap, treeview.get_colormap(),
             0, 0, 0, 0, *pixmap.get_size())

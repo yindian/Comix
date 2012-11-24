@@ -3,8 +3,8 @@
 import os
 import cPickle
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 import constants
 import constants
@@ -12,26 +12,26 @@ import constants
 _pickle_path = os.path.join(constants.DATA_DIR, 'bookmarks.pickle')
 
 
-class BookmarksMenu(gtk.Menu):
+class BookmarksMenu(Gtk.Menu):
 
-    """BookmarksMenu extends gtk.Menu with convenience methods relating to
+    """BookmarksMenu extends Gtk.Menu with convenience methods relating to
     bookmarks. It contains fixed items for adding bookmarks etc. as well
     as dynamic items corresponding to the current bookmarks.
     """
 
     def __init__(self, ui, window):
-        gtk.Menu.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._window = window
-        self._actiongroup = gtk.ActionGroup('comix-bookmarks')
+        self._actiongroup = Gtk.ActionGroup('comix-bookmarks')
         self._actiongroup.add_actions([
             ('add_bookmark', 'comix-add-bookmark', _('_Add bookmark'),
                 '<Control>d', None, self._add_current_to_bookmarks),
             ('edit_bookmarks', None, _('_Edit bookmarks...'),
                 '<Control>b', None, self._edit_bookmarks),
-            ('clear_bookmarks', gtk.STOCK_CLEAR, _('_Clear bookmarks...'),
+            ('clear_bookmarks', Gtk.STOCK_CLEAR, _('_Clear bookmarks...'),
                 None, None, self._clear_bookmarks)])
-        self._separator = gtk.SeparatorMenuItem()
+        self._separator = Gtk.SeparatorMenuItem()
 
         action = self._actiongroup.get_action('add_bookmark')
         action.set_accel_group(ui.get_accel_group())
@@ -40,7 +40,7 @@ class BookmarksMenu(gtk.Menu):
         action.set_accel_group(ui.get_accel_group())
         self.append(action.create_menu_item())
         self.append(self._separator)
-        self.append(gtk.SeparatorMenuItem())
+        self.append(Gtk.SeparatorMenuItem())
         action = self._actiongroup.get_action('clear_bookmarks')
         action.set_accel_group(ui.get_accel_group())
         self.append(action.create_menu_item())
@@ -73,14 +73,14 @@ class BookmarksMenu(gtk.Menu):
         """Remove all bookmarks, if the user presses 'Yes' in a confirmation
         dialog.
         """
-        choice_dialog = gtk.MessageDialog(self._window, 0,
-            gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO,
+        choice_dialog = Gtk.MessageDialog(self._window, 0,
+            Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
             _('Clear all bookmarks?'))
         choice_dialog.format_secondary_text(
             _('All stored bookmarks will be removed. Are you sure that you want to continue?'))
         response = choice_dialog.run()
         choice_dialog.destroy()
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             self._bookmarks_store.clear_bookmarks()
 
     def set_sensitive(self, loaded):
@@ -95,9 +95,9 @@ class BookmarksMenu(gtk.Menu):
         self._bookmarks_store.write_bookmarks_file()
 
 
-class _Bookmark(gtk.ImageMenuItem):
+class _Bookmark(Gtk.ImageMenuItem):
 
-    """_Bookmark represents one bookmark. It extends the gtk.ImageMenuItem
+    """_Bookmark represents one bookmark. It extends the Gtk.ImageMenuItem
     and is thus put directly in the bookmarks menu.
     """
 
@@ -109,11 +109,11 @@ class _Bookmark(gtk.ImageMenuItem):
         self._archive_type = archive_type
         self._file_handler = file_handler
 
-        gtk.MenuItem.__init__(self, str(self), False)
+        GObject.GObject.__init__(self, str(self), False)
         if self._archive_type is not None:
-            im = gtk.image_new_from_stock('comix-archive', gtk.ICON_SIZE_MENU)
+            im = Gtk.Image.new_from_stock('comix-archive', Gtk.IconSize.MENU)
         else:
-            im = gtk.image_new_from_stock('comix-image', gtk.ICON_SIZE_MENU)
+            im = Gtk.Image.new_from_stock('comix-image', Gtk.IconSize.MENU)
         self.set_image(im)
         self.connect('activate', self._load)
 
@@ -221,39 +221,39 @@ class _BookmarksStore:
         fd.close()
 
 
-class _BookmarksDialog(gtk.Dialog):
+class _BookmarksDialog(Gtk.Dialog):
 
     """_BookmarksDialog lets the user remove and/or rearrange bookmarks."""
 
     def __init__(self, window, bookmarks_store):
-        gtk.Dialog.__init__(self, _('Edit bookmarks'), window, gtk.DIALOG_MODAL,
-            (gtk.STOCK_REMOVE, gtk.RESPONSE_NO, gtk.STOCK_CLOSE,
-            gtk.RESPONSE_CLOSE))
+        GObject.GObject.__init__(self, _('Edit bookmarks'), window, Gtk.DialogFlags.MODAL,
+            (Gtk.STOCK_REMOVE, Gtk.ResponseType.NO, Gtk.STOCK_CLOSE,
+            Gtk.ResponseType.CLOSE))
         self._bookmarks_store = bookmarks_store
 
         self.set_has_separator(False)
         self.set_resizable(True)
-        self.set_default_response(gtk.RESPONSE_CLOSE)
+        self.set_default_response(Gtk.ResponseType.CLOSE)
 
-        scrolled = gtk.ScrolledWindow()
+        scrolled = Gtk.ScrolledWindow()
         self.set_border_width(4)
         scrolled.set_border_width(6)
-        scrolled.set_shadow_type(gtk.SHADOW_IN)
-        scrolled.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.vbox.pack_start(scrolled)
+        scrolled.set_shadow_type(Gtk.ShadowType.IN)
+        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.vbox.pack_start(scrolled, True, True, 0)
 
-        self._liststore = gtk.ListStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING,
-            gobject.TYPE_STRING, _Bookmark)
-        self._treeview = gtk.TreeView(self._liststore)
+        self._liststore = Gtk.ListStore(GdkPixbuf.Pixbuf, GObject.TYPE_STRING,
+            GObject.TYPE_STRING, _Bookmark)
+        self._treeview = Gtk.TreeView(self._liststore)
         self._treeview.set_rules_hint(True)
         self._treeview.set_reorderable(True)
         self._selection = self._treeview.get_selection()
         scrolled.add(self._treeview)
-        cellrenderer_text = gtk.CellRendererText()
-        cellrenderer_pbuf = gtk.CellRendererPixbuf()
-        self._icon_col = gtk.TreeViewColumn(None, cellrenderer_pbuf)
-        self._name_col = gtk.TreeViewColumn(_('Name'), cellrenderer_text)
-        self._page_col = gtk.TreeViewColumn(_('Page'), cellrenderer_text)
+        cellrenderer_text = Gtk.CellRendererText()
+        cellrenderer_pbuf = Gtk.CellRendererPixbuf()
+        self._icon_col = Gtk.TreeViewColumn(None, cellrenderer_pbuf)
+        self._name_col = Gtk.TreeViewColumn(_('Name'), cellrenderer_text)
+        self._page_col = Gtk.TreeViewColumn(_('Page'), cellrenderer_text)
         self._treeview.append_column(self._icon_col)
         self._treeview.append_column(self._name_col)
         self._treeview.append_column(self._page_col)
@@ -261,9 +261,9 @@ class _BookmarksDialog(gtk.Dialog):
         self._name_col.set_attributes(cellrenderer_text, text=1)
         self._page_col.set_attributes(cellrenderer_text, text=2)
         self._name_col.set_expand(True)
-        self._icon_col.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
-        self._name_col.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
-        self._page_col.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
+        self._icon_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+        self._name_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+        self._page_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         self.resize(450, 450)
 
         self.connect('response', self._response)
@@ -288,13 +288,13 @@ class _BookmarksDialog(gtk.Dialog):
             self._bookmarks_store.remove_bookmark(bookmark)
 
     def _response(self, dialog, response):
-        if response == gtk.RESPONSE_CLOSE:
+        if response == Gtk.ResponseType.CLOSE:
             self._close()
-        elif response == gtk.RESPONSE_NO:
+        elif response == Gtk.ResponseType.NO:
             self._remove_selected()
 
     def _key_press_event(self, dialog, event, *args):
-        if event.keyval == gtk.keysyms.Delete:
+        if event.keyval == Gdk.KEY_Delete:
             self._remove_selected()
 
     def _close(self, *args):

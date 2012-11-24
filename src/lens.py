@@ -2,7 +2,7 @@
 
 import math
 
-import gtk
+from gi.repository import Gtk
 
 import cursor
 from preferences import prefs
@@ -32,7 +32,7 @@ class MagnifyingGlass:
         if not self._window.file_handler.file_loaded:
             return
         pixbuf = self._get_lens_pixbuf(x, y)
-        cursor = gtk.gdk.Cursor(gtk.gdk.display_get_default(), pixbuf,
+        cursor = Gdk.Cursor.new(Gdk.Display.get_default(), pixbuf,
             prefs['lens size'] // 2, prefs['lens size'] // 2)
         self._window.cursor_handler.set_cursor_type(cursor)
 
@@ -48,7 +48,7 @@ class MagnifyingGlass:
         """Get a pixbuf containing the appropiate image data for the lens
         where <x> and <y> are the positions of the cursor.
         """
-        canvas = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8,
+        canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
             prefs['lens size'], prefs['lens size'])
         canvas.fill(0x000000bb)
         if self._window.displayed_double():
@@ -151,17 +151,17 @@ class MagnifyingGlass:
         subpixbuf = subpixbuf.scale_simple(
             int(math.ceil(source_mag * subpixbuf.get_width())),
             int(math.ceil(source_mag * subpixbuf.get_height())),
-            gtk.gdk.INTERP_TILES)
+            GdkPixbuf.InterpType.TILES)
 
         if rotation == 90:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_CLOCKWISE)
+                Gdk.PIXBUF_ROTATE_CLOCKWISE)
         elif rotation == 180:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_UPSIDEDOWN)
+                Gdk.PIXBUF_ROTATE_UPSIDEDOWN)
         elif rotation == 270:
             subpixbuf = subpixbuf.rotate_simple(
-                gtk.gdk.PIXBUF_ROTATE_COUNTERCLOCKWISE)
+                Gdk.PIXBUF_ROTATE_COUNTERCLOCKWISE)
         if prefs['horizontal flip']:
             subpixbuf = subpixbuf.flip(horizontal=True)
         if prefs['vertical flip']:
