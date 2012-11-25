@@ -26,7 +26,6 @@ class _ThumbnailMaintenanceDialog(Gtk.Dialog):
         button = self.add_button(_('Cleanup'), Gtk.ResponseType.OK)
         button.set_image(Gtk.Image.new_from_stock(
             Gtk.STOCK_CLEAR, Gtk.IconSize.BUTTON))
-        self.set_has_separator(False)
         self.set_resizable(False)
         self.set_border_width(4)
         self.connect('response', self._response)
@@ -85,7 +84,7 @@ class _ThumbnailMaintenanceDialog(Gtk.Dialog):
 
         self.show_all()
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration_do(False)
         self._update_num_and_size()
 
     def _update_num_and_size(self):
@@ -118,7 +117,6 @@ class _ThumbnailRemover(Gtk.Dialog):
         GObject.GObject.__init__(self, _('Removing thumbnails'), parent, 0,
             (Gtk.STOCK_STOP, Gtk.ResponseType.CLOSE))
         self.set_size_request(400, -1)
-        self.set_has_separator(False)
         self.set_resizable(False)
         self.set_border_width(4)
         self.connect('response', self._response)
@@ -207,7 +205,7 @@ class _ThumbnailRemover(Gtk.Dialog):
                 if iteration % 50 == 0:
                     bar.set_fraction(min(1, iteration / self._total_thumbs))
                 while Gtk.events_pending():
-                    Gtk.main_iteration(False)
+                    Gtk.main_iteration_do(False)
 
         self._response()
 

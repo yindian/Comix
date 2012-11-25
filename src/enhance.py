@@ -51,7 +51,6 @@ class _EnhanceImageDialog(Gtk.Dialog):
         GObject.GObject.__init__(self, _('Enhance image'), window, 0)
         self.add_buttons(_('Defaults'), Gtk.ResponseType.NO,
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
-        self.set_has_separator(False)
         self.set_resizable(False)
         self.connect('response', self._response)
         self.set_default_response(Gtk.ResponseType.OK)

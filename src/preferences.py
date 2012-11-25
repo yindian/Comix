@@ -82,7 +82,6 @@ class _PreferencesDialog(Gtk.Dialog):
         GObject.GObject.__init__(self, _('Preferences'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
         self.connect('response', self._response)
-        self.set_has_separator(False)
         self.set_resizable(True)
         self.set_default_response(Gtk.ResponseType.CLOSE)
         notebook = Gtk.Notebook()

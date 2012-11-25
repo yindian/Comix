@@ -45,7 +45,6 @@ class _ComicFileChooserDialog(Gtk.Dialog):
 
         GObject.GObject.__init__(self, title, None, 0, buttons)
         self.set_default_response(Gtk.ResponseType.OK)
-        self.set_has_separator(False)
 
         self.filechooser = Gtk.FileChooserWidget(action=action)
         self.filechooser.set_size_request(680, 420)

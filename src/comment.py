@@ -15,7 +15,6 @@ class _CommentsDialog(Gtk.Dialog):
     def __init__(self, window):
         GObject.GObject.__init__(self, _('Comments'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
-        self.set_has_separator(False)
         self.set_resizable(True)
         self.connect('response', _close_dialog)
         self.set_default_response(Gtk.ResponseType.CLOSE)

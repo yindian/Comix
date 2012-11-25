@@ -18,7 +18,6 @@ class _AboutDialog(Gtk.Dialog):
     def __init__(self, window):
         GObject.GObject.__init__(self, _('About'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
-        self.set_has_separator(False)
         self.set_resizable(False)
         self.connect('response', _close_dialog)
         self.set_default_response(Gtk.ResponseType.CLOSE)
@@ -115,7 +114,7 @@ class _AboutDialog(Gtk.Dialog):
             desc_label = Gtk.Label(label=description)
             desc_label.set_alignment(0, 1.0)
             right_box.pack_start(desc_label, True, True)
-        notebook.insert_page(scrolled, Gtk.Label(label=_('Credits')))
+        notebook.insert_page(scrolled, Gtk.Label(label=_('Credits')), -1)
         self.show_all()
 
 

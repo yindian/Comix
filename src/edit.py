@@ -37,7 +37,6 @@ class _EditArchiveDialog(Gtk.Dialog):
         self._import_button = self.add_button(_('Import'), Gtk.ResponseType.HELP)
         self._import_button.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_ADD,
             Gtk.IconSize.BUTTON))
-        self.set_has_separator(False)
         self.set_border_width(4)
         self.resize(min(Gdk.Screen.get_default().get_width() - 50, 750),
             min(Gdk.Screen.get_default().get_height() - 50, 600))
@@ -75,7 +74,7 @@ class _EditArchiveDialog(Gtk.Dialog):
         self.set_sensitive(False)
         self.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration_do(False)
         image_files = self._image_area.get_file_listing()
         other_files = self._other_area.get_file_listing()
         try:
@@ -183,7 +182,7 @@ class _ImageArea(Gtk.ScrolledWindow):
                 encoding.to_unicode(os.path.basename(path)), path])
             if page % 10 == 0:
                 while Gtk.events_pending():
-                    Gtk.main_iteration(False)
+                    Gtk.main_iteration_do(False)
                 if self._edit_dialog.kill:
                     return
 

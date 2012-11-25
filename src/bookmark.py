@@ -231,7 +231,6 @@ class _BookmarksDialog(Gtk.Dialog):
             Gtk.ResponseType.CLOSE))
         self._bookmarks_store = bookmarks_store
 
-        self.set_has_separator(False)
         self.set_resizable(True)
         self.set_default_response(Gtk.ResponseType.CLOSE)
 
@@ -301,7 +300,7 @@ class _BookmarksDialog(Gtk.Dialog):
         """Close the dialog and update the _BookmarksStore with the new
         ordering."""
         ordering = []
-        treeiter = self._liststore.get_iter_root()
+        treeiter = self._liststore.get_iter_first()
         while treeiter is not None:
             bookmark = self._liststore.get_value(treeiter, 3)
             ordering.insert(0, bookmark)
