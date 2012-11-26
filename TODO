@@ -1,0 +1,45 @@
+* Port to Gtk+3 and PyGI
+** Remove deprecated API such as GtkHScale
+** why isn't thumbar shown when no image loaded?
+** fix saving of thumbnails
+** Fix preferences dialogue
+* XDG_DIRS
+* Remove use of old libraries/API
+** Render to cairo surfaces?
+* Don't silently ignore Exceptions (traceback module?)
+
+== BUGS ==
+* Remove use of GtkVSeparator
+  http://developer.gnome.org/gtk3/3.5/GtkVSeparator.html#GtkVSeparator.description
+* Fix preferences tab
+* Fix/verify Enhance Image
+** Segfault after clicking "Default" button in Enhance Image
+* File -> Open Recent re-opens current file :-/
+* Fix lens
+* Dragging in Library
+* Thumbnails not being saved
+* "Add books" in Library doesn't automagically select the first collection in the "Automatically add books" combo
+* Network drive support?
+* "cannot read through two layers of zip/rar"
+* "settings don't save after exiting, but the hotkeys solve that easily"
+* Info box in Library view changes size and reflows layout :-(
+* Improve GtkRecent integration
+
+== Cleanliness ==
+* Remove use of labels.py ?
+* Adapt to named parameters
+* Port to Python3
+* Remove/reduce custom dialogues
+* Tidy up menus
+** View -> Toolbars - drop?
+** View -> Transform - needs work. Keep Transformation is weird 
+
+== Features ==
+* add Unity integration (jump lists)
+* add appport integration
+* add Zeitgeist integration?
+* Support PDF
+* Enhance Library? Shown on first boot?
+* One feature which I would like to see is the ability to just scroll straight onto the next page without having to re-load, as in most PDF readers.
+* Bookmarks feature could use some love
+* Add Help
