@@ -15,6 +15,7 @@ import shutil
 import tempfile
 
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 import Image
 
 import archive
@@ -125,7 +126,7 @@ def _create_thumbnail(path, dst_dir, image_path=None):
     mime, width, height = GdkPixbuf.Pixbuf.get_file_info(image_path)
     if width <= 128 and height <= 128:
         return pixbuf
-    mime = mime['mime_types'][0]
+    mime = mime.get_mime_types()[0]
     uri = 'file://' + pathname2url(os.path.normpath(path))
     thumbpath = _uri_to_thumbpath(uri, dst_dir)
     stat = os.stat(path)
@@ -170,7 +171,7 @@ def _uri_to_thumbpath(uri, dst_dir):
 def _get_pixbuf128(path):
     try:
         return GdkPixbuf.Pixbuf.new_from_file_at_size(path, 128, 128)
-    except Exception:
+    except Exception as e:
         return None
 
 

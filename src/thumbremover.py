@@ -21,7 +21,7 @@ class _ThumbnailMaintenanceDialog(Gtk.Dialog):
 
     def __init__(self, window):
         self._num_thumbs = 0
-        GObject.GObject.__init__(self, _('Thumbnail maintenance'), window, 0,
+        Gtk.Dialog.__init__(self, _('Thumbnail maintenance'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
         button = self.add_button(_('Cleanup'), Gtk.ResponseType.OK)
         button.set_image(Gtk.Image.new_from_stock(
@@ -32,16 +32,14 @@ class _ThumbnailMaintenanceDialog(Gtk.Dialog):
         self.set_default_response(Gtk.ResponseType.OK)
         main_box = Gtk.VBox(False, 5)
         main_box.set_border_width(6)
-        self.vbox.pack_start(main_box, False, False)
+        self.vbox.pack_start(main_box, False, False, 0)
 
-        label = labels.BoldLabel(_('Cleanup thumbnails'))
+        label = labels.FormattedLabel(text=_('Cleanup thumbnails'),
+                                      weight=Pango.Weight.BOLD,
+                                      size='large')
         label.set_alignment(0, 0.5)
-        attrlist = label.get_attributes()
-        attrlist.insert(Pango.AttrScale(Pango.SCALE_LARGE, 0,
-            len(label.get_text())))
-        label.set_attributes(attrlist)
         main_box.pack_start(label, False, False, 2)
-        main_box.pack_start(Gtk.HSeparator(, True, True, 0), False, False, 5)
+        main_box.pack_start(Gtk.Separator.new(Gtk.Orientation.HORIZONTAL), False, False, 5)
 
         label = labels.ItalicLabel(
             _('Thumbnails for files (such as image files and comic book archives) are stored in your home directory. Many different applications use and create these thumbnails, but sometimes thumbnails remain even though the original files have been removed - wasting space. This dialog can cleanup your stored thumbnails by removing orphaned and outdated thumbnails.'))
@@ -50,32 +48,32 @@ class _ThumbnailMaintenanceDialog(Gtk.Dialog):
         main_box.pack_start(label, False, False, 10)
 
         hbox = Gtk.HBox(False, 10)
-        main_box.pack_start(hbox, False, False)
+        main_box.pack_start(hbox, False, False, 0)
         left_box = Gtk.VBox(True, 5)
         right_box = Gtk.VBox(True, 5)
-        hbox.pack_start(left_box, False, False)
-        hbox.pack_start(right_box, False, False)
+        hbox.pack_start(left_box, False, False, 0)
+        hbox.pack_start(right_box, False, False, 0)
 
         label = labels.BoldLabel('%s:' % _('Thumbnail directory'))
         label.set_alignment(1.0, 1.0)
-        left_box.pack_start(label, True, True)
+        left_box.pack_start(label, True, True, 0)
         label = Gtk.Label(label='%s' % encoding.to_unicode(_thumb_base))
         label.set_alignment(0, 1.0)
-        right_box.pack_start(label, True, True)
+        right_box.pack_start(label, True, True, 0)
 
         label = labels.BoldLabel('%s:' % _('Total number of thumbnails'))
         label.set_alignment(1.0, 1.0)
-        left_box.pack_start(label, True, True)
+        left_box.pack_start(label, True, True, 0)
         self._num_thumbs_label = Gtk.Label(label=_('Calculating...'))
         self._num_thumbs_label.set_alignment(0, 1.0)
-        right_box.pack_start(self._num_thumbs_label, True, True)
+        right_box.pack_start(self._num_thumbs_label, True, True, 0)
 
         label = labels.BoldLabel('%s:' % _('Total size of thumbnails'))
         label.set_alignment(1.0, 1.0)
-        left_box.pack_start(label, True, True)
+        left_box.pack_start(label, True, True, 0)
         self._size_thumbs_label = Gtk.Label(label=_('Calculating...'))
         self._size_thumbs_label.set_alignment(0, 1.0)
-        right_box.pack_start(self._size_thumbs_label, True, True)
+        right_box.pack_start(self._size_thumbs_label, True, True, 0)
 
         label = labels.ItalicLabel(
             _('Do you want to cleanup orphaned and outdated thumbnails now?'))
@@ -114,7 +112,7 @@ class _ThumbnailRemover(Gtk.Dialog):
     def __init__(self, parent, total_thumbs):
         self._total_thumbs = total_thumbs
         self._destroy = False
-        GObject.GObject.__init__(self, _('Removing thumbnails'), parent, 0,
+        Gtk.Dialog.__init__(self, _('Removing thumbnails'), parent, 0,
             (Gtk.STOCK_STOP, Gtk.ResponseType.CLOSE))
         self.set_size_request(400, -1)
         self.set_resizable(False)
@@ -123,36 +121,36 @@ class _ThumbnailRemover(Gtk.Dialog):
         self.set_default_response(Gtk.ResponseType.CLOSE)
         main_box = Gtk.VBox(False, 5)
         main_box.set_border_width(6)
-        self.vbox.pack_start(main_box, False, False)
+        self.vbox.pack_start(main_box, False, False, 0)
 
         hbox = Gtk.HBox(False, 10)
         main_box.pack_start(hbox, False, False, 5)
         left_box = Gtk.VBox(True, 5)
         right_box = Gtk.VBox(True, 5)
-        hbox.pack_start(left_box, False, False)
-        hbox.pack_start(right_box, False, False)
+        hbox.pack_start(left_box, False, False, 0)
+        hbox.pack_start(right_box, False, False, 0)
 
         label = labels.BoldLabel('%s:' % _('Number of removed thumbnails'))
         label.set_alignment(1.0, 1.0)
-        left_box.pack_start(label, True, True)
+        left_box.pack_start(label, True, True, 0)
         number_label = Gtk.Label(label='0')
         number_label.set_alignment(0, 1.0)
-        right_box.pack_start(number_label, True, True)
+        right_box.pack_start(number_label, True, True, 0)
 
         label = labels.BoldLabel('%s:' % _('Total size of removed thumbnails'))
         label.set_alignment(1.0, 1.0)
-        left_box.pack_start(label, True, True)
+        left_box.pack_start(label, True, True, 0)
         size_label = Gtk.Label(label='0.0 MiB')
         size_label.set_alignment(0, 1.0)
-        right_box.pack_start(size_label, True, True)
+        right_box.pack_start(size_label, True, True, 0)
 
         bar = Gtk.ProgressBar()
-        main_box.pack_start(bar, False, False)
+        main_box.pack_start(bar, False, False, 0)
 
         removing_label = labels.ItalicLabel()
         removing_label.set_alignment(0, 0.5)
         removing_label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        main_box.pack_start(removing_label, False, False)
+        main_box.pack_start(removing_label, False, False, 0)
 
         self.show_all()
 

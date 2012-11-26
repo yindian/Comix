@@ -4,6 +4,8 @@ import urllib
 
 from gi.repository import Gtk
 from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 import Image
 import ImageDraw
 
@@ -17,7 +19,7 @@ class ThumbnailSidebar(Gtk.HBox):
     """A thumbnail sidebar including scrollbar for the main window."""
 
     def __init__(self, window):
-        GObject.GObject.__init__(self, False, 0)
+        Gtk.HBox.__init__(self, False, 0)
         self._window = window
         self._loaded = False
         self._load_task = None
@@ -57,15 +59,11 @@ class ThumbnailSidebar(Gtk.HBox):
 
     def get_width(self):
         """Return the width in pixels of the ThumbnailSidebar."""
-        return self._layout.size_request()[0] + self._scroll.size_request()[0]
+        return self._layout.size_request().width + self._scroll.size_request().width
 
     def show(self, *args):
         """Show the ThumbnailSidebar."""
         self.show_all()
-
-    def hide(self):
-        """Hide the ThumbnailSidebar."""
-        self.hide_all()
 
     def clear(self):
         """Clear the ThumbnailSidebar of any loaded thumbnails."""
@@ -104,13 +102,14 @@ class ThumbnailSidebar(Gtk.HBox):
             return
         self._selection.select_path(
             self._window.file_handler.get_current_page() - 1)
+        tree_path = Gtk.TreePath.new_from_string("%s" %(self._window.file_handler.get_current_page() - 1))
         rect = self._treeview.get_background_area(
-            self._window.file_handler.get_current_page() - 1, self._column)
+            tree_path, self._column)
         if (rect.y < self._vadjust.get_value() or rect.y + rect.height >
-          self._vadjust.get_value() + self._vadjust.page_size):
-            value = rect.y + (rect.height // 2) - (self._vadjust.page_size // 2)
+          self._vadjust.get_value() + self._vadjust.get_page_size()):
+            value = rect.y + (rect.height // 2) - (self._vadjust.get_page_size() // 2)
             value = max(0, value)
-            value = min(self._vadjust.upper - self._vadjust.page_size, value)
+            value = min(self._vadjust.get_upper() - self._vadjust.get_page_size(), value)
             self._vadjust.set_value(value)
 
     def _load(self):
@@ -119,7 +118,7 @@ class ThumbnailSidebar(Gtk.HBox):
         else:
             create = prefs['create thumbnails']
         self._stop_update = False
-        for i in xrange(1, self._window.file_handler.get_number_of_pages() + 1):
+        for i in range(1, self._window.file_handler.get_number_of_pages() + 1):
             pixbuf = self._window.file_handler.get_thumbnail(i,
                 prefs['thumbnail size'], prefs['thumbnail size'], create)
             if prefs['show page numbers on thumbnails']:
@@ -130,7 +129,8 @@ class ThumbnailSidebar(Gtk.HBox):
                 Gtk.main_iteration_do(False)
             if self._stop_update:
                 return
-            self._height += self._treeview.get_background_area(i - 1,
+            tree_path = Gtk.TreePath.new_from_string("%s" %(i-1))
+            self._height += self._treeview.get_background_area(tree_path,
                 self._column).height
             self._layout.set_size(0, self._height)
         self._stop_update = True
@@ -155,7 +155,7 @@ class ThumbnailSidebar(Gtk.HBox):
         if event.direction == Gdk.ScrollDirection.UP:
             self._vadjust.set_value(self._vadjust.get_value() - 60)
         elif event.direction == Gdk.ScrollDirection.DOWN:
-            upper = self._vadjust.upper - self._vadjust.page_size
+            upper = self._vadjust.get_upper() - self._vadjust.page_size
             self._vadjust.set_value(min(self._vadjust.get_value() + 60, upper))
 
     def _drag_data_get(self, treeview, context, selection, *args):

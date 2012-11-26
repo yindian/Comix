@@ -2,7 +2,12 @@
 
 from gi.repository import Gtk
 from gi.repository import Pango
+from gi.repository import GLib
 
+'''
+The required Pango Attributes are not introspectable so we're messing around
+with Pango markup instead.
+'''
 
 class FormattedLabel(Gtk.Label):
     
@@ -11,37 +16,46 @@ class FormattedLabel(Gtk.Label):
     """
     
     def __init__(self, text='', weight=Pango.Weight.NORMAL,
-      style=Pango.Style.NORMAL, scale=Pango.SCALE_MEDIUM):
-        GObject.GObject.__init__(self, text)
-        self._weight = weight
-        self._style = style
-        self._scale = scale
-        self._format()
+                 style=Pango.Style.NORMAL, size=None):
+        self._format = "<span"
+
+        Gtk.Label.__init__(self)
+
+        if weight == Pango.Weight.BOLD:
+            self._format += " weight='bold'"
+        elif weight == Pango.Weight.HEAVY:
+            self._format += " weight='heavy'"
+        elif weight == Pango.Weight.ULTRABOLD:
+            self._format += " weight='ultrabold'"
+
+        if style == Pango.Style.ITALIC:
+            self._format += " style='italic'"
+        elif style == Pango.Style.OBLIQUE:
+            self._format += " style='oblique'"
+
+        if size:
+            self._format += " size='%s'" % size
+
+        self._format += ">%s</span>"
+        self.set_markup(self._format % GLib.markup_escape_text(text))
 
     def set_text(self, text):
-        Gtk.Label.set_text(self, text)
-        self._format()
-
-    def _format(self):
-        text_len = len(self.get_text())
-        attrlist = Pango.AttrList()
-        attrlist.insert(Pango.AttrWeight(self._weight, 0, text_len))
-        attrlist.insert(Pango.AttrStyle(self._style, 0, text_len))
-        attrlist.insert(Pango.AttrScale(self._scale, 0, text_len))
-        self.set_attributes(attrlist)
-
+        self.set_markup(self._format % GLib.markup_escape_text(text))
 
 class BoldLabel(FormattedLabel):
     
     """A FormattedLabel that is always bold and otherwise normal."""
     
     def __init__(self, text=''):
-        FormattedLabel.__init__(self, text, weight=Pango.Weight.BOLD)
-
+        Gtk.Label.__init__(self)
+        self._format = "<b>%s</b>"
+        self.set_markup(self._format % GLib.markup_escape_text(text))
 
 class ItalicLabel(FormattedLabel):
     
     """A FormattedLabel that is always italic and otherwise normal."""
     
     def __init__(self, text=''):
-        FormattedLabel.__init__(self, text, style=Pango.Style.ITALIC)
+        Gtk.Label.__init__(self)
+        self._format = "<i>%s</i>"
+        self.set_markup(self._format % GLib.markup_escape_text(text))

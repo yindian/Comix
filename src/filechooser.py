@@ -43,7 +43,7 @@ class _ComicFileChooserDialog(Gtk.Dialog):
             buttons = (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
 
-        GObject.GObject.__init__(self, title, None, 0, buttons)
+        Gtk.Dialog.__init__(self, title, None, 0, buttons)
         self.set_default_response(Gtk.ResponseType.OK)
 
         self.filechooser = Gtk.FileChooserWidget(action=action)
@@ -59,15 +59,15 @@ class _ComicFileChooserDialog(Gtk.Dialog):
         preview_box.set_size_request(130, 0)
         self._preview_image = Gtk.Image()
         self._preview_image.set_size_request(130, 130)
-        preview_box.pack_start(self._preview_image, False, False)
+        preview_box.pack_start(self._preview_image, False, False, 0)
         self.filechooser.set_preview_widget(preview_box)
         self._namelabel = labels.FormattedLabel(weight=Pango.Weight.BOLD,
-            scale=Pango.SCALE_SMALL)
+            size='small')
         self._namelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        preview_box.pack_start(self._namelabel, False, False)
-        self._sizelabel = labels.FormattedLabel(scale=Pango.SCALE_SMALL)
+        preview_box.pack_start(self._namelabel, False, False, 0)
+        self._sizelabel = labels.FormattedLabel(size='small')
         self._sizelabel.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-        preview_box.pack_start(self._sizelabel, False, False)
+        preview_box.pack_start(self._sizelabel, False, False, 0)
         self.filechooser.set_use_preview_label(False)
         preview_box.show_all()
         self.filechooser.connect('update-preview', self._update_preview)
@@ -234,14 +234,14 @@ class _LibraryFileChooserDialog(_ComicFileChooserDialog):
             False)
         self._collection_button.set_active(
             prefs['auto add books into collections'])
-        self._comboentry = Gtk.combo_box_entry_new_text()
+        self._comboentry = Gtk.ComboBoxText.new_with_entry()
         self._comboentry.get_child().set_activates_default(True)
         for collection in self._library.backend.get_all_collections():
             name = self._library.backend.get_collection_name(collection)
             self._comboentry.append_text(name)
         collection_box = Gtk.HBox(False, 6)
-        collection_box.pack_start(self._collection_button, False, False)
-        collection_box.pack_start(self._comboentry, True, True)
+        collection_box.pack_start(self._collection_button, False, False, 0)
+        collection_box.pack_start(self._comboentry, True, True, 0)
         collection_box.show_all()
         self.filechooser.set_extra_widget(collection_box)
 

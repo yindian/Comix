@@ -23,7 +23,7 @@ import thumbremover
 class MainUI(Gtk.UIManager):
 
     def __init__(self, window):
-        GObject.GObject.__init__(self)
+        Gtk.UIManager.__init__(self)
         self._window = window
 
         # ----------------------------------------------------------------

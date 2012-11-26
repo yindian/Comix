@@ -8,8 +8,7 @@ import encoding
 class Statusbar(Gtk.Statusbar):
 
     def __init__(self):
-        GObject.GObject.__init__(self)
-        self.set_has_resize_grip(True)
+        Gtk.Statusbar.__init__(self)
         self._page_info = ''
         self._resolution = ''
         self._root = ''

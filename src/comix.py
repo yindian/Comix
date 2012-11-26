@@ -31,8 +31,6 @@ try:
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
-    assert Gtk.gtk_version >= (2, 12, 0)
-    assert Gtk.pygtk_version >= (2, 12, 0)
     from gi.repository import GObject
     GObject.threads_init()
 except AssertionError:

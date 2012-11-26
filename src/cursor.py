@@ -2,6 +2,7 @@
 
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Gdk
 
 NORMAL, GRAB, WAIT = range(3)
 
@@ -22,7 +23,7 @@ class CursorHandler:
         if cursor == NORMAL:
             mode = None
         elif cursor == GRAB:
-            mode = Gdk.Cursor.new(Gdk.FLEUR)
+            mode = Gdk.Cursor.new(Gdk.CursorType.FLEUR)
         elif cursor == WAIT:
             mode = Gdk.Cursor.new(Gdk.CursorType.WATCH)
         else:
@@ -67,6 +68,4 @@ class CursorHandler:
             GObject.source_remove(self._timer_id)
 
     def _get_hidden_cursor(self):
-        pixmap = Gdk.Pixmap(None, 1, 1, 1)
-        color = Gdk.Color()
-        return Gdk.Cursor.new(pixmap, pixmap, color, color, 0, 0)
+        return Gdk.Cursor.new(Gdk.CursorType.BLANK_CURSOR)

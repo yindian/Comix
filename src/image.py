@@ -1,6 +1,7 @@
 """image.py - Various image manipulations."""
 
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 import Image
 import ImageEnhance
 import ImageOps
@@ -62,11 +63,11 @@ def fit_in_rectangle(src, width, height, scale_up=False, rotation=0):
             src = src.scale_simple(width, height, GdkPixbuf.InterpType.TILES)
 
     if rotation == 90:
-        src = src.rotate_simple(Gdk.PIXBUF_ROTATE_CLOCKWISE)
+        src = src.rotate_simple(GdkPixbuf.PixbufRotation.CLOCKWISE)
     elif rotation == 180:
-        src = src.rotate_simple(Gdk.PIXBUF_ROTATE_UPSIDEDOWN)
+        src = src.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
     elif rotation == 270:
-        src = src.rotate_simple(Gdk.PIXBUF_ROTATE_COUNTERCLOCKWISE)
+        src = src.rotate_simple(GdkPixbuf.PixbufRotation.COUNTERCLOCKWISE)
     return src
 
 
@@ -125,7 +126,7 @@ def add_border(pixbuf, thickness, colour=0x000000FF):
     """Return a pixbuf from <pixbuf> with a <thickness> px border of
     <colour> added.
     """
-    canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+    canvas = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
         pixbuf.get_width() + thickness * 2,
         pixbuf.get_height() + thickness * 2)
     canvas.fill(colour)
@@ -144,10 +145,10 @@ def get_most_common_edge_colour(pixbuf):
     """
     width = pixbuf.get_width()
     height = pixbuf.get_height()
-    top_edge = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, width, 1)
-    bottom_edge = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, width, 1)
-    left_edge = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, 1, height)
-    right_edge = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, 1, height)
+    top_edge = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, 1)
+    bottom_edge = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, 1)
+    left_edge = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1, height)
+    right_edge = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1, height)
     pixbuf.copy_area(0, 0, width, 1, top_edge, 0, 0)
     pixbuf.copy_area(0, height - 1, width, 1, bottom_edge, 0, 0)
     pixbuf.copy_area(0, 0, 1, height, left_edge, 0, 0)
@@ -173,7 +174,7 @@ def pil_to_pixbuf(image):
     IS_RGBA = image.mode == 'RGBA'
     return GdkPixbuf.Pixbuf.new_from_data(imagestr, GdkPixbuf.Colorspace.RGB,
         IS_RGBA, 8, image.size[0], image.size[1],
-        (IS_RGBA and 4 or 3) * image.size[0])
+        (IS_RGBA and 4 or 3) * image.size[0], None, None)
 
 
 def pixbuf_to_pil(pixbuf):

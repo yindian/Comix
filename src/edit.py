@@ -5,6 +5,8 @@ import tempfile
 
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import Pango
 
 import archive
@@ -26,7 +28,7 @@ class _EditArchiveDialog(Gtk.Dialog):
     """
 
     def __init__(self, window):
-        GObject.GObject.__init__(self, _('Edit archive'), window, Gtk.DialogFlags.MODAL,
+        Gtk.Dialog.__init__(self, _('Edit archive'), window, Gtk.DialogFlags.MODAL,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.kill = False # Dialog is killed.
         self.file_handler = window.file_handler
@@ -59,12 +61,12 @@ class _EditArchiveDialog(Gtk.Dialog):
         """
         self._save_button.set_sensitive(False)
         self._import_button.set_sensitive(False)
-        self.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
+        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
         self._image_area.fetch_images()
         if self.kill: # fetch_images() allows pending events to be handled.
             return False
         self._other_area.fetch_comments()
-        self.window.set_cursor(None)
+        self.get_window().set_cursor(None)
         self._save_button.set_sensitive(True)
         self._import_button.set_sensitive(True)
         return False
@@ -72,7 +74,7 @@ class _EditArchiveDialog(Gtk.Dialog):
     def _pack_archive(self, archive_path):
         """Create a new archive with the chosen files."""
         self.set_sensitive(False)
-        self.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
+        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
         image_files = self._image_area.get_file_listing()
@@ -95,7 +97,7 @@ class _EditArchiveDialog(Gtk.Dialog):
             else:
                 fail = True
         if fail:
-            self.window.set_cursor(None)
+            self.get_window().set_cursor(None)
             dialog = Gtk.MessageDialog(self._window, 0, Gtk.MessageType.ERROR,
                 Gtk.ButtonsType.CLOSE, _("The new archive could not be saved!"))
             dialog.format_secondary_text(

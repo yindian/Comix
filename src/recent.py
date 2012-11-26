@@ -11,10 +11,10 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
 
     def __init__(self, ui, window):
         self._window = window
-        self._manager = Gtk.recent_manager_get_default()
-        GObject.GObject.__init__(self, self._manager)
+        Gtk.RecentChooserMenu.__init__(self)
+        self._manager = Gtk.RecentManager.get_default()
 
-        self.set_sort_type(Gtk.RECENT_SORT_MRU)
+        self.set_sort_type(Gtk.RecentSortType.MRU)
         self.set_show_tips(True)
 
         rfilter = Gtk.RecentFilter()

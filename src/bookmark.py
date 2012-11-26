@@ -4,6 +4,7 @@ import os
 import cPickle
 
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 from gi.repository import GObject
 
 import constants
@@ -20,7 +21,7 @@ class BookmarksMenu(Gtk.Menu):
     """
 
     def __init__(self, ui, window):
-        GObject.GObject.__init__(self)
+        Gtk.Menu.__init__(self)
 
         self._window = window
         self._actiongroup = Gtk.ActionGroup('comix-bookmarks')
@@ -109,7 +110,7 @@ class _Bookmark(Gtk.ImageMenuItem):
         self._archive_type = archive_type
         self._file_handler = file_handler
 
-        GObject.GObject.__init__(self, str(self), False)
+        Gtk.ImageMenuItem.__init__(self, name)
         if self._archive_type is not None:
             im = Gtk.Image.new_from_stock('comix-archive', Gtk.IconSize.MENU)
         else:
@@ -226,7 +227,7 @@ class _BookmarksDialog(Gtk.Dialog):
     """_BookmarksDialog lets the user remove and/or rearrange bookmarks."""
 
     def __init__(self, window, bookmarks_store):
-        GObject.GObject.__init__(self, _('Edit bookmarks'), window, Gtk.DialogFlags.MODAL,
+        Gtk.Dialog.__init__(self, _('Edit bookmarks'), window, Gtk.DialogFlags.MODAL,
             (Gtk.STOCK_REMOVE, Gtk.ResponseType.NO, Gtk.STOCK_CLOSE,
             Gtk.ResponseType.CLOSE))
         self._bookmarks_store = bookmarks_store

@@ -10,6 +10,7 @@ except ImportError:
     pass
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Pango
 
 import archive
@@ -27,13 +28,13 @@ class _Page(Gtk.VBox):
     """
 
     def __init__(self):
-        GObject.GObject.__init__(self, False, 12)
+        Gtk.VBox.__init__(self, False, 12)
 
         self.set_border_width(12)
         topbox = Gtk.HBox(False, 12)
-        self.pack_start(topbox, False)
+        self.pack_start(topbox, False, False, 0)
         self._thumb = Gtk.Image()
-        topbox.pack_start(self._thumb, False, False)
+        topbox.pack_start(self._thumb, False, False, 0)
         borderbox = Gtk.EventBox()
         borderbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('#333'))
         borderbox.set_size_request(-1, 130)
@@ -56,8 +57,8 @@ class _Page(Gtk.VBox):
         """
         label = labels.BoldLabel(encoding.to_unicode(filename))
         label.set_alignment(0, 0.5)
-        self._mainbox.pack_start(label, False, False)
-        self._mainbox.pack_start(Gtk.VBox(, True, True, 0)) # Just to add space (better way?)
+        self._mainbox.pack_start(label, False, False, 0)
+        self._mainbox.pack_start(Gtk.VBox(True, 0), False, False, 0) # Just to add space (better way?)
 
     def set_main_info(self, info):
         """Set the information in the main info box (below the filename) to
@@ -66,32 +67,32 @@ class _Page(Gtk.VBox):
         for text in info:
             label = Gtk.Label(label=text)
             label.set_alignment(0, 0.5)
-            self._mainbox.pack_start(label, False, False)
+            self._mainbox.pack_start(label, False, False, 0)
 
     def set_secondary_info(self, info):
         """Set the information below the main info box to the values in the
         sequence <info>. Each entry in info should be a tuple (desc, value).
         """
         hbox = Gtk.HBox(False, 10)
-        self.pack_start(hbox, False, False)
+        self.pack_start(hbox, False, False, 0)
         left_box = Gtk.VBox(True, 8)
         right_box = Gtk.VBox(True, 8)
-        hbox.pack_start(left_box, False, False)
-        hbox.pack_start(right_box, False, False)
+        hbox.pack_start(left_box, False, False, 0)
+        hbox.pack_start(right_box, False, False, 0)
         for desc, value in info:
             desc_label = labels.BoldLabel('%s:' % desc)
             desc_label.set_alignment(1.0, 1.0)
-            left_box.pack_start(desc_label, True, True)
+            left_box.pack_start(desc_label, True, True, 0)
             value_label = Gtk.Label(label=value)
             value_label.set_alignment(0, 1.0)
-            right_box.pack_start(value_label, True, True)
+            right_box.pack_start(value_label, True, True, 0)
 
 
 class _PropertiesDialog(Gtk.Dialog):
 
     def __init__(self, window):
 
-        GObject.GObject.__init__(self, _('Properties'), window, 0,
+        Gtk.Dialog.__init__(self, _('Properties'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
 
         self.set_resizable(False)

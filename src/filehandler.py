@@ -11,6 +11,7 @@ import threading
 import re
 
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 
 import archive
 import cursor

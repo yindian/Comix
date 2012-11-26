@@ -7,6 +7,7 @@ given its own file for the sake of readability.
 import urllib
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GObject
 
 import cursor
@@ -87,8 +88,8 @@ class EventHandler:
             self._window.actiongroup.get_action('zoom_in').activate()
         elif event.keyval == Gdk.KEY_minus:
             self._window.actiongroup.get_action('zoom_out').activate()
-        elif (event.keyval in (Gdk.KEY__0, Gdk.KEY_KP_0) and
-          'GDK_CONTROL_MASK' in event.get_state().value_names):
+        elif (event.keyval in (Gdk.KEY_0, Gdk.KEY_KP_0) and
+              event.get_state() & Gdk.ModifierType.CONTROL_MASK):
             self._window.actiongroup.get_action('zoom_original').activate()
 
         # ----------------------------------------------------------------
@@ -133,7 +134,7 @@ class EventHandler:
             y_step = int(y_step * 0.9)
             if self._window.is_manga_mode:
                 x_step *= -1
-            if ('GDK_SHIFT_MASK' in event.get_state().value_names or
+            if (event.get_state() & Gdk.ModifierMask.SHIFT_MASK or
               event.keyval == Gdk.KEY_KP_Home):
                 if prefs['smart space scroll']:
                     if self._window.displayed_double():
@@ -209,7 +210,7 @@ class EventHandler:
           Gdk.KEY_KP_Down, Gdk.KEY_KP_Home, Gdk.KEY_KP_End,
           Gdk.KEY_KP_Page_Up, Gdk.KEY_KP_Page_Down) or
           (event.keyval == Gdk.KEY_Return and not
-          'GDK_MOD1_MASK' in event.get_state().value_names)):
+           event.get_state() & Gdk.ModifierType.MOD1_MASK)):
             self._window.emit_stop_by_name('key_press_event')
             return True
 
@@ -218,7 +219,7 @@ class EventHandler:
         wheel flips pages in best fit mode and scrolls the scrollbars
         otherwise.
         """
-        if 'GDK_BUTTON2_MASK' in event.get_state().value_names:
+        if event.get_state() & Gdk.ModifierType.BUTTON2_MASK:
             return
         if event.direction == Gdk.ScrollDirection.UP:
             if self._window.zoom_mode == preferences.ZOOM_MODE_BEST:
@@ -256,7 +257,7 @@ class EventHandler:
             self._window.actiongroup.get_action('lens').set_active(True)
         elif event.button == 3:
             self._window.cursor_handler.set_cursor_type(cursor.NORMAL)
-            self._window.popup.popup(None, None, None, event.button,
+            self._window.popup.popup(None, None, None, None, event.button,
                 event.time)
 
     def mouse_release_event(self, widget, event):
@@ -272,7 +273,7 @@ class EventHandler:
     def mouse_move_event(self, widget, event):
         """Handle mouse pointer movement events."""
         event = _get_latest_event_of_same_type(event)
-        if 'GDK_BUTTON1_MASK' in event.get_state().value_names:
+        if event.get_state() == Gdk.ModifierType.BUTTON1_MASK:
             self._window.cursor_handler.set_cursor_type(cursor.GRAB)
             self._window.scroll(self._last_pointer_pos_x - event.x_root,
                                 self._last_pointer_pos_y - event.y_root)

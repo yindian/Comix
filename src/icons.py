@@ -4,6 +4,7 @@ import os
 import sys
 
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 
 def load_icons():
     _icons = (('gimp-flip-horizontal.png',   'comix-flip-horizontal'),
@@ -46,7 +47,7 @@ def load_icons():
     # Load window title icon.
     pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icon_path,
         '16x16/comix.png'))
-    Gtk.window_set_default_icon(pixbuf)
+    Gtk.Window.set_default_icon(pixbuf)
     # Load application icons.
     factory = Gtk.IconFactory()
     for filename, stockid in _icons:

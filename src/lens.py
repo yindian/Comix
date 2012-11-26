@@ -3,6 +3,8 @@
 import math
 
 from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 
 import cursor
 from preferences import prefs
@@ -32,7 +34,7 @@ class MagnifyingGlass:
         if not self._window.file_handler.file_loaded:
             return
         pixbuf = self._get_lens_pixbuf(x, y)
-        cursor = Gdk.Cursor.new(Gdk.Display.get_default(), pixbuf,
+        cursor = Gdk.Cursor.new_from_pixbuf(Gdk.Display.get_default(), pixbuf,
             prefs['lens size'] // 2, prefs['lens size'] // 2)
         self._window.cursor_handler.set_cursor_type(cursor)
 
@@ -48,7 +50,7 @@ class MagnifyingGlass:
         """Get a pixbuf containing the appropiate image data for the lens
         where <x> and <y> are the positions of the cursor.
         """
-        canvas = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8,
+        canvas = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8,
             prefs['lens size'], prefs['lens size'])
         canvas.fill(0x000000bb)
         if self._window.displayed_double():
@@ -61,9 +63,9 @@ class MagnifyingGlass:
             l_image_size = self._window.left_image.size_request()
             r_image_size = self._window.right_image.size_request()
             self._add_subpixbuf(canvas, x, y, l_image_size, l_source_pixbuf,
-                r_image_size[0], left=True)
+                r_image_size.width, left=True)
             self._add_subpixbuf(canvas, x, y, r_image_size, r_source_pixbuf,
-                l_image_size[0], left=False)
+                l_image_size.width, left=False)
         else:
             source_pixbuf = self._window.file_handler.get_pixbufs()
             image_size = self._window.left_image.size_request()
@@ -88,12 +90,12 @@ class MagnifyingGlass:
         area_x, area_y = self._window.get_visible_area_size()
         if left:
             padding_x = max(0,
-                (area_x - other_image_width - image_size[0]) // 2)
+                (area_x - other_image_width - image_size.width) // 2)
         else:
             padding_x = \
-                (max(0, (area_x - other_image_width - image_size[0]) // 2) +
+                (max(0, (area_x - other_image_width - image_size.width) // 2) +
                 other_image_width + 2)
-        padding_y = max(0, (area_y - image_size[1]) // 2)
+        padding_y = max(0, (area_y - image_size.height) // 2)
         x -= padding_x
         y -= padding_y
         rotation = prefs['rotation']
@@ -102,9 +104,9 @@ class MagnifyingGlass:
             rotation = rotation % 360
 
         if rotation in [90, 270]:
-            scale = float(source_pixbuf.get_height()) / image_size[0]
+            scale = float(source_pixbuf.get_height()) / image_size.width
         else:
-            scale = float(source_pixbuf.get_width()) / image_size[0]
+            scale = float(source_pixbuf.get_width()) / image_size.width
         x *= scale
         y *= scale
         source_mag = prefs['lens magnification'] / scale
@@ -146,7 +148,7 @@ class MagnifyingGlass:
         if width < 1 or height < 1:
             return
 
-        subpixbuf = source_pixbuf.subpixbuf(int(src_x), int(src_y),
+        subpixbuf = source_pixbuf.new_subpixbuf(int(src_x), int(src_y),
             int(width), int(height))
         subpixbuf = subpixbuf.scale_simple(
             int(math.ceil(source_mag * subpixbuf.get_width())),

@@ -5,6 +5,7 @@ import cPickle
 
 from gi.repository import Gtk
 from gi.repository import Pango
+from gi.repository import Gdk
 
 import constants
 import labels
@@ -79,7 +80,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
     def __init__(self, window):
         self._window = window
-        GObject.GObject.__init__(self, _('Preferences'), window, 0,
+        Gtk.Dialog.__init__(self, _('Preferences'), window, 0,
             (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
         self.connect('response', self._response)
         self.set_resizable(True)
@@ -98,7 +99,8 @@ class _PreferencesDialog(Gtk.Dialog):
             _('Use this colour as background'))
         fixed_bg_button.set_tooltip_text(
             _('Always use this selected colour as the background colour.'))
-        color_button = Gtk.ColorButton(Gdk.Color(*prefs['bg colour']))
+        color_button = Gtk.ColorButton()
+        color_button.set_property("color", Gdk.Color(*prefs['bg colour']))
         color_button.connect('color_set', self._color_button_cb)
         page.add_row(fixed_bg_button, color_button)
         dynamic_bg_button = Gtk.RadioButton(fixed_bg_button,
@@ -112,7 +114,7 @@ class _PreferencesDialog(Gtk.Dialog):
         page.new_section(_('Thumbnails'))
         label = Gtk.Label(label='%s:' % _('Thumbnail size (in pixels)'))
         adjustment = Gtk.Adjustment(prefs['thumbnail size'], 20, 128, 1, 10)
-        thumb_size_spinner = Gtk.SpinButton(adjustment)
+        thumb_size_spinner = Gtk.SpinButton.new(adjustment, 1, 0)
         thumb_size_spinner.connect('value_changed', self._spinner_cb,
             'thumbnail size')
         page.add_row(label, thumb_size_spinner)
@@ -127,7 +129,7 @@ class _PreferencesDialog(Gtk.Dialog):
         page.new_section(_('Magnifying Glass'))
         label = Gtk.Label(label='%s:' % _('Magnifying glass size (in pixels)'))
         adjustment = Gtk.Adjustment(prefs['lens size'], 50, 400, 1, 10)
-        glass_size_spinner = Gtk.SpinButton(adjustment)
+        glass_size_spinner = Gtk.SpinButton.new(adjustment, 1, 0)
         glass_size_spinner.connect('value_changed', self._spinner_cb,
             'lens size')
         glass_size_spinner.set_tooltip_text(
@@ -136,7 +138,7 @@ class _PreferencesDialog(Gtk.Dialog):
         label = Gtk.Label(label='%s:' % _('Magnification factor'))
         adjustment = Gtk.Adjustment(prefs['lens magnification'], 1.1, 10.0,
             0.1, 1.0)
-        glass_magnification_spinner = Gtk.SpinButton(adjustment, digits=1)
+        glass_magnification_spinner = Gtk.SpinButton.new(adjustment, 1, 0)
         glass_magnification_spinner.connect('value_changed', self._spinner_cb,
             'lens magnification')
         glass_magnification_spinner.set_tooltip_text(
@@ -292,7 +294,7 @@ class _PreferencesDialog(Gtk.Dialog):
         label = Gtk.Label(label='%s:' % _('Slideshow delay (in seconds)'))
         adjustment = Gtk.Adjustment(prefs['slideshow delay'] / 1000.0,
             0.5, 3600.0, 0.1, 1)
-        delay_spinner = Gtk.SpinButton(adjustment, digits=1)
+        delay_spinner = Gtk.SpinButton.new(adjustment, 1, 0)
         delay_spinner.connect('value_changed', self._spinner_cb,
             'slideshow delay')
         page.add_row(label, delay_spinner)
@@ -386,7 +388,7 @@ class _PreferencePage(Gtk.VBox):
         """Create a new page where any possible right columns have the
         width request <right_column_width>.
         """
-        GObject.GObject.__init__(self, False, 12)
+        Gtk.VBox.__init__(self, False, 12)
         self.set_border_width(12)
         self._right_column_width = right_column_width
         self._section = None
@@ -396,7 +398,7 @@ class _PreferencePage(Gtk.VBox):
         <header>.
         """
         self._section = _PreferenceSection(header, self._right_column_width)
-        self.pack_start(self._section, False, False)
+        self.pack_start(self._section, False, False, 0)
 
     def add_row(self, left_item, right_item=None):
         """Add a row to the page (in the latest section), containing one
@@ -425,15 +427,15 @@ class _PreferenceSection(Gtk.VBox):
         <header>, and the width request of the (possible) right columns
         set to that of <right_column_width>.
         """
-        GObject.GObject.__init__(self, False, 0)
+        Gtk.VBox.__init__(self, False, 0)
         self._right_column_width = right_column_width
         self.contentbox = Gtk.VBox(False, 6)
         label = labels.BoldLabel(header)
         label.set_alignment(0, 0.5)
         hbox = Gtk.HBox(False, 0)
-        hbox.pack_start(Gtk.HBox(, True, True, 0), False, False, 6)
+        hbox.pack_start(Gtk.HBox(True, True), False, False, 6)
         hbox.pack_start(self.contentbox, True, True, 0)
-        self.pack_start(label, False, False)
+        self.pack_start(label, False, False, 0)
         self.pack_start(hbox, False, False, 6)
 
     def new_split_vboxes(self):
@@ -448,7 +450,7 @@ class _PreferenceSection(Gtk.VBox):
         right_box.set_size_request(self._right_column_width, -1)
         hbox = Gtk.HBox(False, 12)
         hbox.pack_start(left_box, True, True, 0)
-        hbox.pack_start(right_box, False, False)
+        hbox.pack_start(right_box, False, False, 0)
         self.contentbox.pack_start(hbox, True, True, 0)
         return left_box, right_box
 
