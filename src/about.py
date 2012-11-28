@@ -33,8 +33,9 @@ class _AboutDialog(Gtk.Dialog):
         # ----------------------------------------------------------------
         box = Gtk.VBox(False, 0)
         box.set_border_width(5)
+        # FIXME: we can clean all this up, right?
         base = os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0])))
-        icon_path = os.path.join(base, 'images/comix.svg')
+        icon_path = os.path.join(base, 'images/scalable/comix.svg')
         if not os.path.isfile(icon_path):
             for prefix in [base, '/usr', '/usr/local', '/usr/X11R6']:
                 icon_path = os.path.join(prefix, 'share/comix/images/comix.svg')

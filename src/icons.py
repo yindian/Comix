@@ -35,19 +35,18 @@ def load_icons():
     # Try source directory.
     if os.path.isfile(os.path.join(base, 'images/16x16/comix.png')):
         icon_path = os.path.join(base, 'images')
+        Gtk.Window.set_default_icon_from_file(os.path.join(icon_path,
+                                                           "scalable/comix.svg"))
     else: # Try system directories.
+        # FIXME: we can pass --dir to install.py, how can we reference it here?
         for prefix in [base, '/usr', '/usr/local', '/usr/X11R6']:
             if os.path.isfile(os.path.join(prefix,
-              'share/comix/images/16x16/comix.png')): # Try one
+              'share/comix/images/comix.svg')): # Try one
                 icon_path = os.path.join(prefix, 'share/comix/images')
                 break
     if icon_path is None:
         return
     
-    # Load window title icon.
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icon_path,
-        '16x16/comix.png'))
-    Gtk.Window.set_default_icon(pixbuf)
     # Load application icons.
     factory = Gtk.IconFactory()
     for filename, stockid in _icons:

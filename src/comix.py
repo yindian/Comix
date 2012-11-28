@@ -32,6 +32,7 @@ try:
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
     from gi.repository import GObject
+    from gi.repository import GLib
     GObject.threads_init()
 except AssertionError:
     print "You don't have the required versions of GTK+ and/or PyGTK",
@@ -120,6 +121,10 @@ def run():
         os.makedirs(constants.CONFIG_DIR, 0700)
     deprecated.move_files_to_xdg_dirs()
     preferences.read_preferences_file()
+
+    GLib.set_application_name("Comix")
+    Gtk.Window.set_default_icon_name("comix");
+
     icons.load_icons()
     
     if len(args) >= 1:
