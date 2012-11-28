@@ -100,8 +100,7 @@ FILES = (('src/about.py', 'share/comix/src'),
          ('src/thumbremover.pyc', 'share/comix/src'),
          ('src/ui.py', 'share/comix/src'),
          ('src/ui.pyc', 'share/comix/src'),
-         ('images/16x16/comix.png', 'share/comix/images/16x16'),
-         ('images/comix.svg', 'share/comix/images'),
+         ('images/scalable/comix.svg', 'share/comix/images'),
          ('images/double-page.png', 'share/comix/images'),
          ('images/fitheight.png', 'share/comix/images'),
          ('images/fitmanual.png', 'share/comix/images'),
@@ -130,7 +129,10 @@ FILES = (('src/about.py', 'share/comix/src'),
          ('images/24x24/comix.png', 'share/icons/hicolor/24x24/apps'),
          ('images/32x32/comix.png', 'share/icons/hicolor/32x32/apps'),
          ('images/48x48/comix.png', 'share/icons/hicolor/48x48/apps'),
-         ('images/comix.svg', 'share/icons/hicolor/scalable/apps'))
+         ('images/64x64/comix.png', 'share/icons/hicolor/64x64/apps'),
+         ('images/128x128/comix.png', 'share/icons/hicolor/128x128/apps'),
+         ('images/256x256/comix.png', 'share/icons/hicolor/256x256/apps'),
+         ('images/scalable/comix.svg', 'share/icons/hicolor/scalable/apps'))
 
 # Symlinks to be created, as (target, symlink)
 LINKS = (('../share/comix/src/comix.py', 'bin/comix'),)
