@@ -3,10 +3,17 @@
 ** why isn't thumbar shown when no image loaded?
 ** fix saving of thumbnails
 ** Fix preferences dialogue
-* XDG_DIRS
+** Port to GtkApplication?
+** Don't use GtkTable
+* Update gtk icon cache after installing icons
+* XDG_DIRS - remove portability.py ?
 * Remove use of old libraries/API
 ** Render to cairo surfaces?
+** GSettings
+* Review all files, remove and fix code as appropriate
 * Don't silently ignore Exceptions (traceback module?)
+* Thumbnailer?
+* We install into share/comix/src, pitivi installs into lib/pitiv/python/pitivi
 
 == BUGS ==
 * Remove use of GtkVSeparator
@@ -24,6 +31,8 @@
 * "settings don't save after exiting, but the hotkeys solve that easily"
 * Info box in Library view changes size and reflows layout :-(
 * Improve GtkRecent integration
+* Icon looks fugly in Gnome switcher
+** install icon then call self.set_icon_name() ?
 
 == Cleanliness ==
 * Remove use of labels.py ?
