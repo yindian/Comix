@@ -2,9 +2,8 @@
 ** Remove deprecated API such as GtkHScale
 ** why isn't thumbar shown when no image loaded?
 ** fix saving of thumbnails
-** Fix preferences dialogue
 ** Port to GtkApplication?
-** Don't use GtkTable
+** Don't use GtkTable, it's ugly and also deprecated in favour of GtkGrid
 * Update gtk icon cache after installing icons
 * XDG_DIRS - remove portability.py ?
 * Remove use of old libraries/API
@@ -16,9 +15,6 @@
 * We install into share/comix/src, pitivi installs into lib/pitiv/python/pitivi
 
 == BUGS ==
-* Remove use of GtkVSeparator
-  http://developer.gnome.org/gtk3/3.5/GtkVSeparator.html#GtkVSeparator.description
-* Fix preferences tab
 * Fix/verify Enhance Image
 ** Segfault after clicking "Default" button in Enhance Image
 * File -> Open Recent re-opens current file :-/
@@ -36,7 +32,7 @@
 
 == Cleanliness ==
 * Remove use of labels.py ?
-* Adapt to named parameters
+* Change to named parameters
 * Port to Python3
 * Remove/reduce custom dialogues
 * Tidy up menus
