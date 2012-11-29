@@ -95,15 +95,17 @@ class _PreferencesDialog(Gtk.Dialog):
         # ----------------------------------------------------------------
         page = _PreferencePage(80)
         page.new_section(_('Background'))
-        fixed_bg_button = Gtk.RadioButton(None, '%s:' %
+        fixed_bg_button = Gtk.RadioButton.new_with_label(None, '%s:' %
             _('Use this colour as background'))
         fixed_bg_button.set_tooltip_text(
             _('Always use this selected colour as the background colour.'))
-        color_button = Gtk.ColorButton()
-        color_button.set_property("color", Gdk.Color(*prefs['bg colour']))
+        color = Gdk.RGBA(*prefs['bg colour'])
+        color_button = Gtk.ColorButton.new_with_rgba(color)
         color_button.connect('color_set', self._color_button_cb)
         page.add_row(fixed_bg_button, color_button)
-        dynamic_bg_button = Gtk.RadioButton(fixed_bg_button,
+
+        dynamic_bg_button = Gtk.RadioButton.new_with_label_from_widget(
+            fixed_bg_button,
             _('Use dynamic background colour.'))
         dynamic_bg_button.set_active(prefs['smart bg'])
         dynamic_bg_button.connect('toggled', self._check_button_cb, 'smart bg')
