@@ -782,7 +782,7 @@ class _ControlArea(Gtk.HBox):
         hbox.pack_start(label, False, False, 6)
         adjustment = Gtk.Adjustment(prefs['library cover size'], 50, 128, 1,
             10, 0)
-        cover_size_scale = Gtk.HScale(adjustment=adjustment)
+        cover_size_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment)
         cover_size_scale.set_size_request(150, -1)
         cover_size_scale.set_draw_value(False)
         cover_size_scale.connect('value_changed', self._change_cover_size)
