@@ -1,14 +1,11 @@
 * Port to Gtk+3 and PyGI
-** Remove deprecated API such as GtkHScale
 ** why isn't thumbar shown when no image loaded?
-** fix saving of thumbnails
 ** Port to GtkApplication?
 ** Don't use GtkTable, it's ugly and also deprecated in favour of GtkGrid
 * Update gtk icon cache after installing icons
-* XDG_DIRS - remove portability.py ?
 * Remove use of old libraries/API
 ** Render to cairo surfaces?
-** GSettings
+** GSettings? "Fix" preferences.py to be more GObject-y and less Pythonic
 * Review all files, remove and fix code as appropriate
 * Don't silently ignore Exceptions (traceback module?)
 * Thumbnailer?
