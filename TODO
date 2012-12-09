@@ -2,6 +2,7 @@
 ** why isn't thumbar shown when no image loaded?
 ** Port to GtkApplication?
 ** Don't use GtkTable, it's ugly and also deprecated in favour of GtkGrid
+* Fix DND in Library i.e. dragging book to collection
 * Update gtk icon cache after installing icons
 * Remove use of old libraries/API
 ** Render to cairo surfaces?
@@ -12,12 +13,8 @@
 * We install into share/comix/src, pitivi installs into lib/pitiv/python/pitivi
 
 == BUGS ==
-* Fix/verify Enhance Image
-** Segfault after clicking "Default" button in Enhance Image
-* File -> Open Recent re-opens current file :-/
+* File -> Open Recent re-opens current file :-/ Upstream bug: https://bugs.launchpad.net/ubuntu/+source/gtk+3.0/+bug/1088124
 * Fix lens
-* Dragging in Library
-* Thumbnails not being saved
 * "Add books" in Library doesn't automagically select the first collection in the "Automatically add books" combo
 * Network drive support?
 * "cannot read through two layers of zip/rar"
@@ -37,7 +34,7 @@
 ** View -> Transform - needs work. Keep Transformation is weird 
 
 == Features ==
-* add Unity integration (jump lists)
+* add Unity integration (jump lists, comix scope & comic lens)
 * add appport integration
 * add Zeitgeist integration?
 * Support PDF
