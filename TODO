@@ -1,5 +1,9 @@
+* Be single instance
+** Able to open the Library only
+** Enable fullscreen by calling comix --fullscreen
+** Show library by calling comix --library
 * Port to Gtk+3 and PyGI
-** why isn't thumbar shown when no image loaded?
+** why isn't thumbar shown when no image loaded? it is, why isn't the bg right?
 ** Port to GtkApplication?
 ** Don't use GtkTable, it's ugly and also deprecated in favour of GtkGrid
 * Fix DND in Library i.e. dragging book to collection
@@ -13,7 +17,6 @@
 * We install into share/comix/src, pitivi installs into lib/pitiv/python/pitivi
 
 == BUGS ==
-* File -> Open Recent re-opens current file :-/ Upstream bug: https://bugs.launchpad.net/ubuntu/+source/gtk+3.0/+bug/1088124
 * Fix lens
 * "Add books" in Library doesn't automagically select the first collection in the "Automatically add books" combo
 * Network drive support?
