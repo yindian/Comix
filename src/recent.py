@@ -18,16 +18,7 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
         self.set_show_tips(True)
 
         rfilter = Gtk.RecentFilter()
-        rfilter.add_pixbuf_formats()
-        rfilter.add_mime_type('application/x-zip')
-        rfilter.add_mime_type('application/zip')
-        rfilter.add_mime_type('application/x-rar')
-        rfilter.add_mime_type('application/x-tar')
-        rfilter.add_mime_type('application/x-gzip')
-        rfilter.add_mime_type('application/x-bzip2')
-        rfilter.add_mime_type('application/x-cbz')
-        rfilter.add_mime_type('application/x-cbr')
-        rfilter.add_mime_type('application/x-cbt')
+        rfilter.add_application('Comix')
         self.add_filter(rfilter)
 
         self.connect('item_activated', self._load)
@@ -40,5 +31,6 @@ class RecentFilesMenu(Gtk.RecentChooserMenu):
     def add(self, path):
         if not preferences.prefs['store recent file info']:
             return
+
         uri = 'file://' + urllib.pathname2url(path)
         self._manager.add_item(uri)
