@@ -134,7 +134,7 @@ class EventHandler:
             y_step = int(y_step * 0.9)
             if self._window.is_manga_mode:
                 x_step *= -1
-            if (event.get_state() & Gdk.ModifierMask.SHIFT_MASK or
+            if (event.get_state() & Gdk.ModifierType.SHIFT_MASK or
               event.keyval == Gdk.KEY_KP_Home):
                 if prefs['smart space scroll']:
                     if self._window.displayed_double():
