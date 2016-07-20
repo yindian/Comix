@@ -14,6 +14,7 @@ import gtk
 
 import process
 import time
+import traceback
 
 ZIP, RAR, TAR, GZIP, BZIP2 = range(5)
 P7ZIP = 5
@@ -294,8 +295,21 @@ class Extractor:
                 if self.is_ready(name):
                     return
                 if _7z_exec is not None:
-                    proc = process.Process([_7z_exec, 'x', self._rarpass,
-                        '-y', '-bd', '-o' + self._dst, self._src]) #, name
+                    need_bb = False
+                    proc = process.Process([_7z_exec, '-h'])
+                    fd = proc.spawn()
+                    for line in fd.readlines():
+                        if line.startswith('  -bb[0-3]'):
+                            need_bb = True
+                            break
+                    fd.close()
+                    proc.wait()
+                    if not need_bb:
+                        proc = process.Process([_7z_exec, 'x', self._rarpass,
+                            '-y', '-bd', '-o' + self._dst, self._src]) #, name
+                    else:
+                        proc = process.Process([_7z_exec, 'x', self._rarpass,
+                            '-y', '-bd', '-bb1', '-bse1', '-o' + self._dst, self._src]) #, name
                     fd = proc.spawn()
                     line = fd.readline()
                     count = 0
@@ -305,6 +319,17 @@ class Extractor:
 			    fname = line[12:-1]
 			    if fname.endswith('     Data Error in encrypted file. Wrong password?'):
 				    fname = fname[:-50]
+                            self._extracted[fname] = True
+                            self._condition.notify()
+                            self._condition.release()
+                            if count == 10:
+                                count = 0
+                                time.sleep(0.1)
+                            else:
+                                count += 1
+                        elif line.startswith('- ') or line.startswith('T '):
+                            self._condition.acquire()
+			    fname = line[2:-1]
                             self._extracted[fname] = True
                             self._condition.notify()
                             self._condition.release()
@@ -323,6 +348,7 @@ class Extractor:
             # archive) than to crash here and leave the main thread in a
             # possible infinite block. Damaged or missing files *should* be
             # handled gracefully by the main program anyway.
+	    traceback.print_exc()
             pass
         self._condition.acquire()
         self._extracted[name] = True
