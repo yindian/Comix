@@ -1,10 +1,10 @@
 """image.py - Various image manipulations."""
 
 import gtk
-import Image
-import ImageEnhance
-import ImageOps
-import ImageStat
+from PIL import Image
+from PIL import ImageEnhance
+from PIL import ImageOps
+from PIL import ImageStat
 
 from preferences import prefs
 
@@ -169,7 +169,10 @@ def get_most_common_edge_colour(pixbuf):
 
 def pil_to_pixbuf(image):
     """Return a pixbuf created from the PIL <image>."""
-    imagestr = image.tostring()
+    try:
+        imagestr = image.tostring()
+    except:
+        imagestr = image.tobytes()
     IS_RGBA = image.mode == 'RGBA'
     return gtk.gdk.pixbuf_new_from_data(imagestr, gtk.gdk.COLORSPACE_RGB,
         IS_RGBA, 8, image.size[0], image.size[1],

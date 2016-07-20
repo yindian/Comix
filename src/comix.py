@@ -49,7 +49,7 @@ except ImportError:
     sys.exit(1)
 
 try:
-    import Image
+    from PIL import Image
     assert Image.VERSION >= '1.1.5'
 except AssertionError:
     print "You don't have the required version of the Python Imaging",
