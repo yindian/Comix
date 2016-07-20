@@ -10,8 +10,8 @@ from gi.repository import GdkPixbuf
 from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Pango
-import Image
-import ImageDraw
+from PIL import Image
+from PIL import ImageDraw
 
 import archive
 import encoding

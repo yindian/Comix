@@ -16,7 +16,7 @@ import tempfile
 
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
-import Image
+from PIL import Image
 
 import archive
 import constants

@@ -240,7 +240,7 @@ def check_dependencies():
         print '    !!! PyGTK .................... Not found'
         required_found = False
     try:
-        import Image
+        from PIL import Image
         assert Image.VERSION >= '1.1.5'
         print '    Python Imaging Library ....... OK'
     except ImportError:
