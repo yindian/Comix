@@ -225,6 +225,10 @@ class MainWindow(Gtk.Window):
 
         if self.displayed_double():
             left_pixbuf, right_pixbuf = self.file_handler.get_pixbufs()
+            if hasattr(left_pixbuf, 'get_static_image'):
+                left_pixbuf = left_pixbuf.get_static_image()
+            if hasattr(right_pixbuf, 'get_static_image'):
+                right_pixbuf = right_pixbuf.get_static_image()
             if self.is_manga_mode:
                 right_pixbuf, left_pixbuf = left_pixbuf, right_pixbuf
             left_unscaled_x = left_pixbuf.get_width()
@@ -308,7 +312,10 @@ class MainWindow(Gtk.Window):
 
             rotation = prefs['rotation']
             if prefs['auto rotate from exif']:
-                rotation += image.get_implied_rotation(pixbuf)
+                if hasattr(pixbuf, 'get_static_image'):
+                    rotation += image.get_implied_rotation(pixbuf.get_static_image())
+                else:
+                    rotation += image.get_implied_rotation(pixbuf)
                 rotation = rotation % 360
 
             if self.zoom_mode == preferences.ZOOM_MODE_MANUAL:
@@ -318,15 +325,20 @@ class MainWindow(Gtk.Window):
                     scaled_width, scaled_height = scaled_height, scaled_width
                 scale_up = True
             
-            pixbuf = image.fit_in_rectangle(pixbuf, scaled_width,
-                scaled_height, scale_up=scale_up, rotation=rotation)
-            if prefs['horizontal flip']:
-                pixbuf = pixbuf.flip(horizontal=True)
-            if prefs['vertical flip']:
-                pixbuf = pixbuf.flip(horizontal=False)
-            pixbuf = self.enhancer.enhance(pixbuf)
+            if not hasattr(pixbuf, 'is_static_image') or pixbuf.is_static_image():
+                if hasattr(pixbuf, 'get_static_image'):
+                    pixbuf = pixbuf.get_static_image()
+                pixbuf = image.fit_in_rectangle(pixbuf, scaled_width,
+                    scaled_height, scale_up=scale_up, rotation=rotation)
+                if prefs['horizontal flip']:
+                    pixbuf = pixbuf.flip(horizontal=True)
+                if prefs['vertical flip']:
+                    pixbuf = pixbuf.flip(horizontal=False)
+                pixbuf = self.enhancer.enhance(pixbuf)
 
-            self.left_image.set_from_pixbuf(pixbuf)
+                self.left_image.set_from_pixbuf(pixbuf)
+            else:
+                self.left_image.set_from_animation(pixbuf)
             self.right_image.clear()
             x_padding = (area_width - pixbuf.get_width()) / 2
             y_padding = (area_height - pixbuf.get_height()) / 2

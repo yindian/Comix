@@ -60,6 +60,10 @@ class MagnifyingGlass:
             else:
                 l_source_pixbuf, r_source_pixbuf = \
                     self._window.file_handler.get_pixbufs()
+            if hasattr(l_source_pixbuf, 'get_static_image'):
+                l_source_pixbuf = l_source_pixbuf.get_static_image()
+            if hasattr(r_source_pixbuf, 'get_static_image'):
+                r_source_pixbuf = r_source_pixbuf.get_static_image()
             l_image_size = self._window.left_image.size_request()
             r_image_size = self._window.right_image.size_request()
             self._add_subpixbuf(canvas, x, y, l_image_size, l_source_pixbuf,
@@ -68,6 +72,8 @@ class MagnifyingGlass:
                 l_image_size.width, left=False)
         else:
             source_pixbuf = self._window.file_handler.get_pixbufs()
+            if hasattr(source_pixbuf, 'get_static_image'):
+                source_pixbuf = source_pixbuf.get_static_image()
             image_size = self._window.left_image.size_request()
             self._add_subpixbuf(canvas, x, y, image_size, source_pixbuf)
         return image.add_border(canvas, 1)

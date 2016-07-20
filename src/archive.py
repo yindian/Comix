@@ -3,17 +3,24 @@
 import sys
 import os
 import re
-import zipfile
+try:
+    import czipfile as zipfile
+except:
+    import zipfile
 import tarfile
 import threading
 
 from gi.repository import Gtk
 
 import process
+import time
 
 ZIP, RAR, TAR, GZIP, BZIP2 = range(5)
+P7ZIP = 5
 
 _rar_exec = None
+_7z_exec = None
+_last_pass = ""
 
 
 class Extractor:
@@ -48,9 +55,33 @@ class Extractor:
         self._stop = False
         self._extract_thread = None
         self._condition = threading.Condition()
+        self._rarpass = '-p-'
+	global _last_pass
 
         if self._type == ZIP:
             self._zfile = zipfile.ZipFile(src, 'r')
+	    need_pass = False
+	    for info in self._zfile.infolist():
+		    if info.flag_bits & 0x1:
+			    need_pass = True
+			    break
+            if need_pass:
+                print >> sys.stderr, "You need password for ", src
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION,
+                        gtk.BUTTONS_OK_CANCEL,
+                        _("Enter password:"))
+                entry = gtk.Entry()
+                entry.set_text(_last_pass)
+                entry.show()
+                dialog.vbox.pack_end(entry)
+                entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
+                dialog.set_default_response(gtk.RESPONSE_OK)
+                ret = dialog.run()
+                text = entry.get_text()
+                dialog.destroy()
+                if ret == gtk.RESPONSE_OK:
+			self._zfile.setpassword(text)
+			_last_pass = text
             self._files = self._zfile.namelist()
         elif self._type in (TAR, GZIP, BZIP2):
             self._tfile = tarfile.open(src, 'r')
@@ -69,11 +100,91 @@ class Extractor:
                     dialog.run()
                     dialog.destroy()
                     return None
-            proc = process.Process([_rar_exec, 'vb', '--', src])
+            need_pass = False
+            proc = process.Process([_rar_exec, 'l', '-p-', '--', src])
+            fd = proc.spawn()
+            for line in fd.readlines():
+                if line and line[0] in '*C' and (line.startswith('*') or line.startswith('CRC') or line.startswith('Checksum')):
+                    need_pass = True
+                    break
+            fd.close()
+            proc.wait()
+            if need_pass:
+                print >> sys.stderr, "You need password for ", src
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION,
+                        gtk.BUTTONS_OK_CANCEL,
+                        _("Enter password:"))
+                entry = gtk.Entry()
+                entry.set_text(_last_pass)
+                entry.show()
+                dialog.vbox.pack_end(entry)
+                entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
+                dialog.set_default_response(gtk.RESPONSE_OK)
+                ret = dialog.run()
+                text = entry.get_text()
+                dialog.destroy()
+                if ret == gtk.RESPONSE_OK:
+                    self._rarpass = '-p' + text
+		    _last_pass = text
+            proc = process.Process([_rar_exec, 'vb', self._rarpass, '--', src])
             fd = proc.spawn()
             self._files = [name.rstrip(os.linesep) for name in fd.readlines()]
             fd.close()
             proc.wait()
+        elif self._type == P7ZIP:
+            global _7z_exec
+            if _7z_exec is None:
+                _7z_exec = _get_7z_exec()
+                if _7z_exec is None:
+                    print '! Could not find 7z file extractor.'
+                    dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING,
+                        gtk.BUTTONS_CLOSE,
+                        _("Could not find 7z file extractor!"))
+                    dialog.format_secondary_markup(
+                        _("You need either the <i>7z</i> or the <i>7za</i> program installed in order to read 7z files."))
+                    dialog.run()
+                    dialog.destroy()
+                    return None
+            need_pass = False
+            proc = process.Process([_7z_exec, 'l', '-slt', '-p-', src])
+            fd = proc.spawn()
+            self._files = []
+            for line in fd:
+                if line.startswith('Path = '):
+                    self._files.append(line[7:-1])
+                elif line.startswith('Encrypted = +'):
+                    need_pass = True
+                elif line.endswith('Wrong password?\n'):
+                    need_pass = True
+                    self._files = []
+                    break
+            fd.close()
+            proc.wait()
+            if need_pass:
+                print >> sys.stderr, "You need password for ", src
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION,
+                        gtk.BUTTONS_OK_CANCEL,
+                        _("Enter password:"))
+                entry = gtk.Entry()
+                entry.set_text(_last_pass)
+                entry.show()
+                dialog.vbox.pack_end(entry)
+                entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
+                dialog.set_default_response(gtk.RESPONSE_OK)
+                ret = dialog.run()
+                text = entry.get_text()
+                dialog.destroy()
+                if ret == gtk.RESPONSE_OK:
+                    self._rarpass = '-p' + text
+		    _last_pass = text
+                    if not self._files:
+                        proc = process.Process([_7z_exec, 'l', '-slt', self._rarpass, src])
+                        fd = proc.spawn()
+                        for line in fd:
+                            if line.startswith('Path = '):
+                                self._files.append(line[7:-1])
+                        fd.close()
+                        proc.wait()
         else:
             print '! Non-supported archive format:', src
             return None
@@ -173,12 +284,40 @@ class Extractor:
                     print '! Non-local tar member:', name, '\n'
             elif self._type == RAR:
                 if _rar_exec is not None:
-                    proc = process.Process([_rar_exec, 'x', '-kb', '-p-',
+                    proc = process.Process([_rar_exec, 'x', '-kb', self._rarpass,
                         '-o-', '-inul', '--', self._src, name, self._dst])
                     proc.spawn()
                     proc.wait()
                 else:
                     print '! Could not find RAR file extractor.'
+            elif self._type == P7ZIP:
+                if self.is_ready(name):
+                    return
+                if _7z_exec is not None:
+                    proc = process.Process([_7z_exec, 'x', self._rarpass,
+                        '-y', '-bd', '-o' + self._dst, self._src]) #, name
+                    fd = proc.spawn()
+                    line = fd.readline()
+                    count = 0
+                    while line:
+                        if line.startswith('Extracting  '):
+                            self._condition.acquire()
+			    fname = line[12:-1]
+			    if fname.endswith('     Data Error in encrypted file. Wrong password?'):
+				    fname = fname[:-50]
+                            self._extracted[fname] = True
+                            self._condition.notify()
+                            self._condition.release()
+                            if count == 10:
+                                count = 0
+                                time.sleep(0.1)
+                            else:
+                                count += 1
+                        line = fd.readline()
+                    proc.wait()
+                    return
+                else:
+                    print '! Could not find 7z file extractor.'
         except Exception:
             # Better to ignore any failed extractions (e.g. from a corrupt
             # archive) than to crash here and leave the main thread in a
@@ -296,6 +435,8 @@ def archive_mime_type(path):
                 return TAR
             if magic == 'Rar!':
                 return RAR
+            if magic == '7z\xBC\xAF':
+                return P7ZIP
     except Exception:
         print '! Error while reading', path
     return None
@@ -332,6 +473,15 @@ def _get_rar_exec():
     no such executable is found.
     """
     for command in ('unrar', 'rar'):
+        if process.Process([command]).spawn() is not None:
+            return command
+    return None
+
+def _get_7z_exec():
+    """Return the name of the 7z file extractor executable, or None if
+    no such executable is found.
+    """
+    for command in ('7z', '7za'):
         if process.Process([command]).spawn() is not None:
             return command
     return None

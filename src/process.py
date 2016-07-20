@@ -27,7 +27,7 @@ class Process:
         (NOTE: separate function to make python2.4 exception syntax happy)
         """
         try:
-            self._proc = subprocess.Popen(self._args, stdout=subprocess.PIPE)
+            self._proc = subprocess.Popen(self._args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             return self._proc.stdout
         except Exception:
             return None
