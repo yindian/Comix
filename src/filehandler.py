@@ -47,7 +47,7 @@ class FileHandler:
         self._name_table = {}
         self._extractor = archive.Extractor()
         self._condition = None
-        self._image_re = re.compile(r'\.(jpg|jpeg|png|gif|tif|tiff)\s*$', re.I)
+        self._image_re = re.compile(r'\.(jpg|jpeg|png|gif|bmp|tif|tiff)\s*$', re.I)
         self.update_comment_extensions()
 
     def _get_pixbuf(self, index):
@@ -57,7 +57,7 @@ class FileHandler:
         if index not in self._raw_pixbufs:
             self._wait_on_page(index + 1)
             try:
-                self._raw_pixbufs[index] = gtk.gdk.pixbuf_new_from_file(
+                self._raw_pixbufs[index] = gtk.gdk.PixbufAnimation(
                     self._image_files[index])
             except Exception:
                 self._raw_pixbufs[index] = self._get_missing_image()
@@ -278,7 +278,8 @@ class FileHandler:
                 fpath = os.path.join(self._base_path, f)
                 if is_image_file(fpath):
                     self._image_files.append(fpath)
-            self._image_files.sort(locale.strcoll)
+            #self._image_files.sort(locale.strcoll)
+            alphanumeric_sort(self._image_files)
             self._current_image_index = self._image_files.index(path)
 
         if not self._image_files:
@@ -554,6 +555,15 @@ def alphanumeric_sort(filenames):
         if s.isdigit():
             return int(s)
         return s.lower()
+    def _convert_utf8(s):
+        if type(s) == unicode:
+            return s.encode('utf-8')
+        return s
 
     rec = re.compile("\d+|\D+")
-    filenames.sort(key=lambda s: map(_format_substring, rec.findall(s)))
+    prefix = os.path.commonprefix([_convert_utf8(s) for s in filenames])
+    prefixlen = len(prefix)
+    prefix2 = os.path.commonprefix([_convert_utf8(s)[prefixlen+1:] for s in filenames])
+    if len(prefix2) >= 4:
+        prefixlen = len(prefix) + 1 + len(prefix2)
+    filenames.sort(key=lambda s: map(_format_substring, rec.findall(_convert_utf8(s)[prefixlen:])))
