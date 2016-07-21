@@ -24,6 +24,7 @@ import filehandler
 
 _thumbdir = os.path.join(constants.HOME_DIR, '.thumbnails/normal')
 
+from archive import hfs_hack
 
 def get_thumbnail(path, create=True, dst_dir=_thumbdir):
     """Return a thumbnail pixbuf for the file at <path> by looking in the
@@ -98,7 +99,11 @@ def _get_new_archive_thumbnail(path, dst_dir):
         return None
     extractor.set_files([wanted])
     extractor.extract()
-    image_path = os.path.join(tmpdir, wanted)
+    if extractor._type == archive.ZIP:
+        hack = hfs_hack
+    else:
+        hack = lambda f: f
+    image_path = os.path.join(tmpdir, hack(wanted))
     condition.acquire()
     while not extractor.is_ready(wanted):
         condition.wait()
