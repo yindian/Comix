@@ -19,6 +19,7 @@ import image
 from preferences import prefs
 import thumbnail
 
+from archive import hfs_hack
 
 class FileHandler:
 
@@ -238,11 +239,15 @@ class FileHandler:
             files = self._extractor.get_files()
             image_files = filter(self._image_re.search, files)
             alphanumeric_sort(image_files)
+            if self.archive_type == archive.ZIP:
+                hack = hfs_hack
+            else:
+                hack = lambda f: f
             self._image_files = \
-                [os.path.join(self._tmp_dir, f) for f in image_files]
+                [os.path.join(self._tmp_dir, hack(f)) for f in image_files]
             comment_files = filter(self._comment_re.search, files)
             self._comment_files = \
-                [os.path.join(self._tmp_dir, f) for f in comment_files]
+                [os.path.join(self._tmp_dir, hack(f)) for f in comment_files]
             for name, full_path in zip(image_files, self._image_files):
                 self._name_table[full_path] = name
             for name, full_path in zip(comment_files, self._comment_files):

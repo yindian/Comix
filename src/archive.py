@@ -14,6 +14,7 @@ import gtk
 
 import process
 import time
+import urllib
 import traceback
 
 ZIP, RAR, TAR, GZIP, BZIP2 = range(5)
@@ -23,6 +24,12 @@ _rar_exec = None
 _7z_exec = None
 _last_pass = ""
 
+def hfs_hack(f):
+    if sys.platform == 'darwin':
+        if type(f) == unicode:
+            f = f.encode('utf-8')
+        f = urllib.quote(f)
+    return f
 
 class Extractor:
 
@@ -271,7 +278,7 @@ class Extractor:
             sys.exit(0)
         try:
             if self._type == ZIP:
-                dst_path = os.path.join(self._dst, name)
+                dst_path = os.path.join(self._dst, hfs_hack(name))
                 if not os.path.exists(os.path.dirname(dst_path)):
                     os.makedirs(os.path.dirname(dst_path))
                 new = open(dst_path, 'wb')
@@ -316,9 +323,9 @@ class Extractor:
                     while line:
                         if line.startswith('Extracting  '):
                             self._condition.acquire()
-			    fname = line[12:-1]
-			    if fname.endswith('     Data Error in encrypted file. Wrong password?'):
-				    fname = fname[:-50]
+                            fname = line[12:-1]
+                            if fname.endswith('     Data Error in encrypted file. Wrong password?'):
+                                    fname = fname[:-50]
                             self._extracted[fname] = True
                             self._condition.notify()
                             self._condition.release()
@@ -329,7 +336,7 @@ class Extractor:
                                 count += 1
                         elif line.startswith('- ') or line.startswith('T '):
                             self._condition.acquire()
-			    fname = line[2:-1]
+                            fname = line[2:-1]
                             self._extracted[fname] = True
                             self._condition.notify()
                             self._condition.release()
