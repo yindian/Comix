@@ -28,7 +28,14 @@ def hfs_hack(f):
     if sys.platform == 'darwin':
         if type(f) == unicode:
             f = f.encode('utf-8')
-        f = urllib.quote(f)
+        else:
+            try:
+                f.decode('utf-8')
+            except:
+                try:
+                    f = f.decode('cp936').encode('utf-8')
+                except:
+                    f = urllib.quote(f)
     return f
 
 class Extractor:
