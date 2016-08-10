@@ -11,6 +11,12 @@ import tarfile
 import threading
 
 from gi.repository import Gtk
+from gi.repository import Gtk as gtk
+gtk.MESSAGE_QUESTION = Gtk.MessageType.QUESTION
+gtk.MESSAGE_WARNING = Gtk.MessageType.WARNING
+gtk.BUTTONS_OK_CANCEL = Gtk.ButtonsType.OK_CANCEL
+gtk.BUTTONS_CLOSE = Gtk.ButtonsType.CLOSE
+gtk.RESPONSE_OK = Gtk.ResponseType.OK
 
 import process
 import time
@@ -88,7 +94,7 @@ class Extractor:
                 entry = gtk.Entry()
                 entry.set_text(_last_pass)
                 entry.show()
-                dialog.vbox.pack_end(entry)
+                dialog.vbox.pack_end(entry, False, False, 0)
                 entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
                 dialog.set_default_response(gtk.RESPONSE_OK)
                 ret = dialog.run()
@@ -132,7 +138,7 @@ class Extractor:
                 entry = gtk.Entry()
                 entry.set_text(_last_pass)
                 entry.show()
-                dialog.vbox.pack_end(entry)
+                dialog.vbox.pack_end(entry, False, False, 0)
                 entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
                 dialog.set_default_response(gtk.RESPONSE_OK)
                 ret = dialog.run()
@@ -183,7 +189,7 @@ class Extractor:
                 entry = gtk.Entry()
                 entry.set_text(_last_pass)
                 entry.show()
-                dialog.vbox.pack_end(entry)
+                dialog.vbox.pack_end(entry, False, False, 0)
                 entry.connect('activate', lambda _: dialog.response(gtk.RESPONSE_OK))
                 dialog.set_default_response(gtk.RESPONSE_OK)
                 ret = dialog.run()
