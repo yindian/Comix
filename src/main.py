@@ -262,6 +262,9 @@ class MainWindow(Gtk.Window):
                 scaled_height = int(self._manual_zoom * total_height / 100)
                 scale_up = True
 
+            if self.get_scale_factor() != 1:
+                scaled_width *= self.get_scale_factor()
+                scaled_height *= self.get_scale_factor()
             left_pixbuf, right_pixbuf = image.fit_2_in_rectangle(
                 left_pixbuf, right_pixbuf, scaled_width, scaled_height,
                 scale_up=scale_up, rotation1=left_rotation,
@@ -277,6 +280,11 @@ class MainWindow(Gtk.Window):
 
             self.left_image.set_from_pixbuf(left_pixbuf)
             self.right_image.set_from_pixbuf(right_pixbuf)
+            if self.get_scale_factor() != 1:
+                surface = Gdk.cairo_surface_create_from_pixbuf(left_pixbuf, self.get_scale_factor(), self.left_image.get_window())
+                self.left_image.set_from_surface(surface)
+                surface = Gdk.cairo_surface_create_from_pixbuf(right_pixbuf, self.get_scale_factor(), self.right_image.get_window())
+                self.right_image.set_from_surface(surface)
             x_padding = (area_width - left_pixbuf.get_width() -
                 right_pixbuf.get_width()) / 2
             y_padding = (area_height - max(left_pixbuf.get_height(),
@@ -328,6 +336,9 @@ class MainWindow(Gtk.Window):
             if not hasattr(pixbuf, 'is_static_image') or pixbuf.is_static_image():
                 if hasattr(pixbuf, 'get_static_image'):
                     pixbuf = pixbuf.get_static_image()
+                if self.get_scale_factor() != 1:
+                    scaled_width *= self.get_scale_factor()
+                    scaled_height *= self.get_scale_factor()
                 pixbuf = image.fit_in_rectangle(pixbuf, scaled_width,
                     scaled_height, scale_up=scale_up, rotation=rotation)
                 if prefs['horizontal flip']:
@@ -337,6 +348,9 @@ class MainWindow(Gtk.Window):
                 pixbuf = self.enhancer.enhance(pixbuf)
 
                 self.left_image.set_from_pixbuf(pixbuf)
+                if self.get_scale_factor() != 1:
+                    surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.get_scale_factor(), self.left_image.get_window())
+                    self.left_image.set_from_surface(surface)
             else:
                 self.left_image.set_from_animation(pixbuf)
             self.right_image.clear()
