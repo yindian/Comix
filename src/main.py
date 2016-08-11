@@ -729,6 +729,8 @@ class MainWindow(Gtk.Window):
         """Set the background colour to <colour>. Colour is a sequence in the
         format (r, g, b). Values are 16-bit.
         """
+        self._main_layout.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(*colour))
+        return
         self._main_layout.override_background_color(Gtk.StateType.NORMAL,
             Gdk.RGBA(colour[0], colour[1], colour[2], 0))
         return
