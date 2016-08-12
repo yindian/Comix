@@ -285,10 +285,10 @@ class MainWindow(Gtk.Window):
                 self.left_image.set_from_surface(surface)
                 surface = Gdk.cairo_surface_create_from_pixbuf(right_pixbuf, self.get_scale_factor(), self.right_image.get_window())
                 self.right_image.set_from_surface(surface)
-            x_padding = (area_width - left_pixbuf.get_width() -
-                right_pixbuf.get_width()) / 2
-            y_padding = (area_height - max(left_pixbuf.get_height(),
-                right_pixbuf.get_height())) / 2
+            x_padding = (area_width - left_pixbuf.get_width() / self.get_scale_factor() -
+                right_pixbuf.get_width() / self.get_scale_factor()) / 2
+            y_padding = (area_height - max(left_pixbuf.get_height() / self.get_scale_factor(),
+                right_pixbuf.get_height() / self.get_scale_factor())) / 2
             
             if left_rotation in (90, 270):
                 left_scale_percent = (100.0 * left_pixbuf.get_width() /
@@ -354,8 +354,8 @@ class MainWindow(Gtk.Window):
             else:
                 self.left_image.set_from_animation(pixbuf)
             self.right_image.clear()
-            x_padding = (area_width - pixbuf.get_width()) / 2
-            y_padding = (area_height - pixbuf.get_height()) / 2
+            x_padding = (area_width - pixbuf.get_width() / self.get_scale_factor()) / 2
+            y_padding = (area_height - pixbuf.get_height() / self.get_scale_factor()) / 2
             
             if rotation in (90, 270):
                 scale_percent = 100.0 * pixbuf.get_width() / unscaled_y
