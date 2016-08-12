@@ -42,12 +42,12 @@ def fit_in_rectangle(src, width, height, scale_up=False, rotation=0, scale_facto
         if src.get_has_alpha():
             if prefs['checkered bg for transparent images']:
                 src = src.composite_color_simple(src_width, src_height,
-                    GdkPixbuf.InterpType.TILES, 255, 8, 0x777777, 0x999999)
+                    GdkPixbuf.InterpType.HYPER, 255, 8, 0x777777, 0x999999)
             else:
                 src = src.composite_color_simple(src_width, src_height,
-                    GdkPixbuf.InterpType.TILES, 255, 1024, 0xFFFFFF, 0xFFFFFF)
+                    GdkPixbuf.InterpType.HYPER, 255, 1024, 0xFFFFFF, 0xFFFFFF)
         elif scale_factor != 1:
-            src = src.scale_simple(src_width, src_height, GdkPixbuf.InterpType.TILES)
+            src = src.scale_simple(src_width, src_height, GdkPixbuf.InterpType.HYPER)
     else:
         if float(src_width) / width > float(src_height) / height:
             height = int(max(src_height * width / src_width, 1))
@@ -57,12 +57,12 @@ def fit_in_rectangle(src, width, height, scale_up=False, rotation=0, scale_facto
         if src.get_has_alpha():
             if prefs['checkered bg for transparent images']:
                 src = src.composite_color_simple(width, height,
-                    GdkPixbuf.InterpType.TILES, 255, 8, 0x777777, 0x999999)
+                    GdkPixbuf.InterpType.HYPER, 255, 8, 0x777777, 0x999999)
             else:
                 src = src.composite_color_simple(width, height,
-                    GdkPixbuf.InterpType.TILES, 255, 1024, 0xFFFFFF, 0xFFFFFF)
+                    GdkPixbuf.InterpType.HYPER, 255, 1024, 0xFFFFFF, 0xFFFFFF)
         else:
-            src = src.scale_simple(width, height, GdkPixbuf.InterpType.TILES)
+            src = src.scale_simple(width, height, GdkPixbuf.InterpType.HYPER)
 
     if rotation == 90:
         src = src.rotate_simple(GdkPixbuf.PixbufRotation.CLOCKWISE)
