@@ -133,6 +133,7 @@ class ThumbnailSidebar(Gtk.HBox):
             self._height += self._treeview.get_background_area(tree_path,
                 self._column).height
             self._layout.set_size(0, self._height)
+        self._liststore.append([None])
         self._stop_update = True
         self.update_select()
     
