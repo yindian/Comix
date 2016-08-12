@@ -340,7 +340,7 @@ class MainWindow(Gtk.Window):
                     scaled_width *= self.get_scale_factor()
                     scaled_height *= self.get_scale_factor()
                 pixbuf = image.fit_in_rectangle(pixbuf, scaled_width,
-                    scaled_height, scale_up=scale_up, rotation=rotation)
+                    scaled_height, scale_up=scale_up, rotation=rotation, scale_factor=self.get_scale_factor())
                 if prefs['horizontal flip']:
                     pixbuf = pixbuf.flip(horizontal=True)
                 if prefs['vertical flip']:

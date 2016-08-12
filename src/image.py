@@ -10,7 +10,7 @@ from PIL import ImageStat
 from preferences import prefs
 
 
-def fit_in_rectangle(src, width, height, scale_up=False, rotation=0):
+def fit_in_rectangle(src, width, height, scale_up=False, rotation=0, scale_factor=1):
     """Scale (and return) a pixbuf so that it fits in a rectangle with
     dimensions <width> x <height>. A negative <width> or <height>
     means an unbounded dimension - both cannot be negative.
@@ -35,8 +35,8 @@ def fit_in_rectangle(src, width, height, scale_up=False, rotation=0):
     if rotation in (90, 270):
         width, height = height, width
 
-    src_width = src.get_width()
-    src_height = src.get_height()
+    src_width = src.get_width() * scale_factor
+    src_height = src.get_height() * scale_factor
 
     if not scale_up and src_width <= width and src_height <= height:
         if src.get_has_alpha():
@@ -46,6 +46,8 @@ def fit_in_rectangle(src, width, height, scale_up=False, rotation=0):
             else:
                 src = src.composite_color_simple(src_width, src_height,
                     GdkPixbuf.InterpType.TILES, 255, 1024, 0xFFFFFF, 0xFFFFFF)
+        elif scale_factor != 1:
+            src = src.scale_simple(src_width, src_height, GdkPixbuf.InterpType.TILES)
     else:
         if float(src_width) / width > float(src_height) / height:
             height = int(max(src_height * width / src_width, 1))
