@@ -569,6 +569,8 @@ def is_image_file(path):
     """
     if os.path.isfile(path):
         info = GdkPixbuf.Pixbuf.get_file_info(path)
+        if isinstance(info, tuple):
+            info = info[0]
         return info is not None
     return False
 
