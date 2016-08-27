@@ -111,6 +111,9 @@ class FileHandler:
         in a new page.
         """
         if not self.file_loaded:
+	    if self.archive_type is not None and not self._image_files \
+	    and prefs['auto open next archive']:
+                self._open_next_archive()
             return False
         old_page = self.get_current_page()
         viewed = self._window.displayed_double() and 2 or 1
@@ -127,6 +130,9 @@ class FileHandler:
         results in a new page.
         """
         if not self.file_loaded:
+	    if self.archive_type is not None and not self._image_files \
+	    and prefs['auto open next archive']:
+                self._open_previous_archive()
             return False
         if self.get_current_page() == 1:
             if (prefs['auto open next archive'] and
