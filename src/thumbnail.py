@@ -5,6 +5,7 @@ Only normal size (i.e. 128x128 px) thumbnails are supported.
 """
 
 import os
+import sys
 from urllib import pathname2url, url2pathname
 try: # The md5 module is deprecated as of Python 2.5, replaced by hashlib.
     from hashlib import md5
@@ -25,6 +26,7 @@ import filehandler
 _thumbdir = os.path.join(constants.HOME_DIR, '.thumbnails/normal')
 
 from archive import hfs_hack
+from archive import win_hack
 
 def get_thumbnail(path, create=True, dst_dir=_thumbdir):
     """Return a thumbnail pixbuf for the file at <path> by looking in the
@@ -53,7 +55,11 @@ def get_thumbnail(path, create=True, dst_dir=_thumbdir):
             mtime = -1
         if os.stat(path).st_mtime != mtime:
             return _get_new_thumbnail(path, create, dst_dir)
-        return GdkPixbuf.Pixbuf.new_from_file(thumbpath)
+        try:
+            return GdkPixbuf.Pixbuf.new_from_file(thumbpath)
+        except:
+            if sys.platform == "win32":
+                return GdkPixbuf.Pixbuf.new_from_file(win_hack(thumbpath))
     except Exception:
         return None
 
@@ -180,6 +186,11 @@ def _get_pixbuf128(path):
     try:
         return GdkPixbuf.Pixbuf.new_from_file_at_size(path, 128, 128)
     except Exception as e:
+        if sys.platform == "win32":
+            try:
+                return GdkPixbuf.Pixbuf.new_from_file_at_size(win_hack(path), 128, 128)
+            except:
+                pass
         return None
 
 

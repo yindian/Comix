@@ -30,6 +30,48 @@ _rar_exec = None
 _7z_exec = None
 _last_pass = ""
 
+def win_hack(f):
+    if type(f) == unicode:
+        f = f.encode('mbcs', 'replace')
+    try:
+        f.encode('ascii')
+    except:
+        s, e = os.path.splitext(f)
+        ar = s.split('\\')
+        for i in xrange(len(ar)):
+            try:
+                ar[i].encode('ascii')
+            except:
+                ar[i] = ar[i].encode('base64').replace('\n', '').replace('+', '-').replace('/', '_')
+        f = '\\'.join(ar) + e
+    return f
+
+def win_rename(dst, name):
+    if not os.path.exists(os.path.join(dst, name)):
+        return
+    f = win_hack(name)
+    if f != name:
+        try:
+            try:
+                os.rename(os.path.join(dst, name), os.path.join(dst, f))
+            except:
+                os.makedirs(os.path.dirname(os.path.join(dst, f)))
+                os.rename(os.path.join(dst, name), os.path.join(dst, f))
+            #print "Renamed %s to %s under %s" % (name, f, dst)
+        except:
+            traceback.print_exc()
+    else:
+        #print "Kept %s under %s" % (name, dst)
+        pass
+
+def no_rename(dst, name):
+    pass
+
+if sys.platform == "win32":
+    rename = win_rename
+else:
+    rename = no_rename
+
 def hfs_hack(f):
     if sys.platform == 'darwin':
         if type(f) == unicode:
@@ -340,6 +382,7 @@ class Extractor:
                             if fname.endswith('     Data Error in encrypted file. Wrong password?'):
                                     fname = fname[:-50]
                             self._extracted[fname] = True
+                            rename(self._dst, name)
                             self._condition.notify()
                             self._condition.release()
                             if count == 10:
@@ -351,6 +394,7 @@ class Extractor:
                             self._condition.acquire()
                             fname = line[2:-1]
                             self._extracted[fname] = True
+                            rename(self._dst, name)
                             self._condition.notify()
                             self._condition.release()
                             if count == 10:
@@ -372,6 +416,7 @@ class Extractor:
             pass
         self._condition.acquire()
         self._extracted[name] = True
+        rename(self._dst, name)
         self._condition.notify()
         self._condition.release()
 

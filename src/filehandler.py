@@ -21,6 +21,7 @@ from preferences import prefs
 import thumbnail
 
 from archive import hfs_hack
+from archive import win_hack
 
 class FileHandler:
 
@@ -62,6 +63,14 @@ class FileHandler:
                 self._raw_pixbufs[index] = GdkPixbuf.PixbufAnimation.new_from_file(
                     self._image_files[index])
             except Exception:
+                if sys.platform == "win32":
+                    try:
+                        self._raw_pixbufs[index] = GdkPixbuf.PixbufAnimation.new_from_file(
+                            win_hack(self._image_files[index]))
+                    except:
+                        pass
+                    else:
+                        return self._raw_pixbufs[index]
                 self._raw_pixbufs[index] = self._get_missing_image()
         return self._raw_pixbufs[index]
 
@@ -212,6 +221,13 @@ class FileHandler:
         Return True if the file is successfully loaded.
         """
         # If the given <path> is invalid we update the statusbar.
+        if not os.path.exists(path):
+            if sys.platform == "win32":
+                try:
+                    path = path.decode('utf-8')
+                    path = path.encode('mbcs')
+                except:
+                    pass
         if os.path.isdir(path):
             self._window.statusbar.set_message(
                 _('Could not open %s: Is a directory.') % path)
@@ -462,6 +478,15 @@ class FileHandler:
                 thumb = GdkPixbuf.Pixbuf.new_from_file_at_size(path, width,
                     height)
             except Exception:
+                if sys.platform == "win32":
+                    try:
+                        thumb = GdkPixbuf.Pixbuf.new_from_file_at_size(win_hack(path), width,
+                            height)
+                    except:
+                        pass
+                    else:
+                        thumb = image.fit_in_rectangle(thumb, width, height)
+                        return thumb
                 thumb = None
         if thumb is None:
             thumb = self._get_missing_image()
