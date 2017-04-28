@@ -214,10 +214,14 @@ class Extractor:
             self._files = []
             for line in fd:
                 if line.startswith('Path = '):
-                    self._files.append(line[7:-1])
+                    if line.endswith('\r\n'):
+                        eol = -2
+                    else:
+                        eol = -1
+                    self._files.append(line[7:eol])
                 elif line.startswith('Encrypted = +'):
                     need_pass = True
-                elif line.endswith('Wrong password?\n'):
+                elif line.rstrip().endswith('Wrong password?'):
                     need_pass = True
                     self._files = []
                     break
@@ -245,7 +249,11 @@ class Extractor:
                         fd = proc.spawn()
                         for line in fd:
                             if line.startswith('Path = '):
-                                self._files.append(line[7:-1])
+                                if line.endswith('\r\n'):
+                                    eol = -2
+                                else:
+                                    eol = -1
+                                self._files.append(line[7:eol])
                         fd.close()
                         proc.wait()
         else:
@@ -374,15 +382,19 @@ class Extractor:
                             '-y', '-bd', '-bb1', '-bse1', '-o' + self._dst, self._src]) #, name
                     fd = proc.spawn()
                     line = fd.readline()
+                    if line.endswith('\r\n'):
+                        eol = -2
+                    else:
+                        eol = -1
                     count = 0
                     while line:
                         if line.startswith('Extracting  '):
                             self._condition.acquire()
-                            fname = line[12:-1]
+                            fname = line[12:eol]
                             if fname.endswith('     Data Error in encrypted file. Wrong password?'):
                                     fname = fname[:-50]
                             self._extracted[fname] = True
-                            rename(self._dst, name)
+                            rename(self._dst, fname)
                             self._condition.notify()
                             self._condition.release()
                             if count == 10:
@@ -392,9 +404,9 @@ class Extractor:
                                 count += 1
                         elif line.startswith('- ') or line.startswith('T '):
                             self._condition.acquire()
-                            fname = line[2:-1]
+                            fname = line[2:eol]
                             self._extracted[fname] = True
-                            rename(self._dst, name)
+                            rename(self._dst, fname)
                             self._condition.notify()
                             self._condition.release()
                             if count == 10:
