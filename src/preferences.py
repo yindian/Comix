@@ -343,7 +343,7 @@ class _PreferencesDialog(Gtk.Dialog):
 
     def _color_button_cb(self, colorbutton):
         """Callback for the background colour selection button."""
-        colour = colorbutton.get_color()
+        colour = colorbutton.get_rgba()
         prefs['bg colour'] = colour.red, colour.green, colour.blue
         if not prefs['smart bg'] or not self._window.file_handler.file_loaded:
             self._window.set_bg_colour(prefs['bg colour'])

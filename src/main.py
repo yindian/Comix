@@ -47,6 +47,7 @@ class MainWindow(Gtk.Window):
         self.zoom_mode = preferences.ZOOM_MODE_BEST
         self.width = None
         self.height = None
+        self.bg_colour = None
 
         self._manual_zoom = 100 # In percent of original image size
         self._waiting_for_redraw = False
@@ -191,6 +192,8 @@ class MainWindow(Gtk.Window):
             self._event_handler.mouse_move_event)
         self._main_layout.connect('drag_data_received',
             self._event_handler.drag_n_drop_event)
+        self._main_layout.connect('draw',
+            self._event_handler.draw_bg_colour)
 
         self.ui_manager.set_sensitivities()
         self.show()
@@ -747,6 +750,9 @@ class MainWindow(Gtk.Window):
         """Set the background colour to <colour>. Colour is a sequence in the
         format (r, g, b). Values are 16-bit.
         """
+        self.bg_colour = colour
+        self._main_layout.queue_draw()
+        return
         self._main_layout.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(*colour))
         return
         self._main_layout.override_background_color(Gtk.StateType.NORMAL,

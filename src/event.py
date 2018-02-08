@@ -304,6 +304,15 @@ class EventHandler:
         path = urllib.url2pathname(uri)
         self._window.file_handler.open_file(path)
 
+    def draw_bg_colour(self, widget, cr):
+        colour = self._window.bg_colour
+        if colour:
+            clip = cr.clip_extents()
+            cr.set_source_rgb(*colour)
+            cr.set_operator(1)
+            cr.rectangle(0, 0, *clip[2:])
+            cr.fill()
+
     def _scroll_with_flipping(self, x, y):
         """Handle scrolling with the scroll wheel or the arow keys, for which
         the pages might be flipped depending on the preferences.
