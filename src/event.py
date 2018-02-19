@@ -340,6 +340,8 @@ def _get_latest_event_of_same_type(event):
                 event = queued_event
             else:
                 events.append(queued_event)
+        else:
+            break
     for queued_event in events:
         queued_event.put()
     return event
