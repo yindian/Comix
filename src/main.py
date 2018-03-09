@@ -215,6 +215,8 @@ class MainWindow(Gtk.Window):
         self._display_active_widgets()
         if not self.file_handler.file_loaded:
             return False
+        self.statusbar.set_root(self.file_handler.get_base_filename())
+        self.statusbar.update()
         area_width, area_height = self.get_visible_area_size()
         if self.zoom_mode == preferences.ZOOM_MODE_HEIGHT:
             scaled_width = -1
