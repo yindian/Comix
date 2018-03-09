@@ -126,7 +126,8 @@ def run():
         param_path = os.path.abspath(args[0])
         if os.path.isdir(param_path):
             dir_files = os.listdir(param_path)
-            dir_files.sort(locale.strcoll)
+            #dir_files.sort(locale.strcoll)
+            filehandler.alphanumeric_sort(dir_files)
             for filename in dir_files:
                 full_path = os.path.join(param_path, filename)
                 if filehandler.is_image_file(full_path):
