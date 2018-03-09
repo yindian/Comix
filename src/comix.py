@@ -129,6 +129,11 @@ def run():
     
     if len(args) >= 1:
         param_path = os.path.abspath(args[0])
+        if sys.platform == "win32" and type(param_path) == str:
+            try:
+                param_path = param_path.decode('mbcs')
+            except:
+                pass
         if os.path.isdir(param_path):
             dir_files = os.listdir(param_path)
             dir_files.sort(locale.strcoll)
