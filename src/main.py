@@ -475,6 +475,11 @@ class MainWindow(Gtk.Window):
         else:
             self.unfullscreen()
             self.cursor_handler.auto_hide_off()
+        width, height = self.width, self.height
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
+        if (width, height) == (self.width, self.height):
+            self.draw_image(scroll=False)
 
     def change_zoom_mode(self, radioaction, *args):
         old_mode = self.zoom_mode
