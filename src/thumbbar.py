@@ -92,6 +92,7 @@ class ThumbnailSidebar(Gtk.HBox):
         self._loaded = True
         if self._load_task is not None:
             GObject.source_remove(self._load_task)
+            self._load_task = None
         self._load_task = GObject.idle_add(self._load)
 
     def update_select(self):
@@ -113,6 +114,7 @@ class ThumbnailSidebar(Gtk.HBox):
             self._vadjust.set_value(value)
 
     def _load(self):
+        self._load_task = None
         if self._window.file_handler.archive_type is not None:
             create = False
         else:
