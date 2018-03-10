@@ -2,6 +2,7 @@
 
 import gc
 import subprocess
+import sys
 
 
 class Process:
@@ -20,6 +21,11 @@ class Process:
         the process, e.g. ['ls', '-a'].
         """
         self._args = args
+        if sys.platform == "win32":
+            self._args = args[:]
+            for i in xrange(len(args)):
+                if type(self._args[i]) == unicode:
+                    self._args[i] = self._args[i].encode('mbcs', 'replace')
         self._proc = None
     
     def _exec(self):
