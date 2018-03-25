@@ -50,7 +50,7 @@ def win_rename(dst, name):
     if not os.path.exists(os.path.join(dst, name)):
         return
     f = win_hack(name)
-    if f != name:
+    if f != name and os.path.isfile(os.path.join(dst, name)):
         try:
             try:
                 os.rename(os.path.join(dst, name), os.path.join(dst, f))
