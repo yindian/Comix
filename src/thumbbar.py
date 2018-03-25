@@ -158,7 +158,7 @@ class ThumbnailSidebar(Gtk.HBox):
         if event.direction == Gdk.ScrollDirection.UP:
             self._vadjust.set_value(self._vadjust.get_value() - 60)
         elif event.direction == Gdk.ScrollDirection.DOWN:
-            upper = self._vadjust.get_upper() - self._vadjust.page_size
+            upper = self._vadjust.get_upper() - self._vadjust.get_page_size()
             self._vadjust.set_value(min(self._vadjust.get_value() + 60, upper))
 
     def _drag_data_get(self, treeview, context, selection, *args):
