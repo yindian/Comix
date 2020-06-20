@@ -149,6 +149,12 @@ def run():
         open_path = preferences.prefs['path to last file']
         open_page = preferences.prefs['page of last file']
     
+    if sys.platform == 'darwin':
+        try:
+            import AppKit
+            AppKit.NSApplication.sharedApplication().activateIgnoringOtherApps_(True)
+        except ImportError:
+            pass
     window = main.MainWindow(fullscreen=fullscreen, show_library=show_library,
         open_path=open_path, open_page=open_page)
     deprecated.check_for_deprecated_files(window)
